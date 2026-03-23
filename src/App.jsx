@@ -125,18 +125,6 @@ Note: ${formData.notes}`
           items: ["Pacchetti personalizzati", "Bus organizzato", "Esperienze speciali"],
         },
       ],
-        },
-        {
-          title: "Nicht-Mitglieder",
-          price: "Nach Verfügbarkeit",
-          items: ["Standardanfrage", "Vergabe nach Reihenfolge", "Mögliche Warteliste"],
-        },
-        {
-          title: "Bus & VIP",
-          price: "Auf Anfrage",
-          items: ["Individuelle Pakete", "Organisierte Busfahrt", "Besondere Erlebnisse"],
-        },
-      ],
       matches: [
         {
           competition: "Serie A",
@@ -182,7 +170,7 @@ Note: ${formData.notes}`
     },
   };
 
-  const t = content[language];
+  const t = content[language] || content.it;
 
   const officialEmail = "jcdgagnelli@gmx.de";
   const whatsappDe = "https://wa.me/491724385672";
