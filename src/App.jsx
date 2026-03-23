@@ -421,6 +421,7 @@ Note: ${formData.notes}`
               <p className="mt-3 text-zinc-300">{t.travelText}</p>
               <div className="mt-5 space-y-3 text-sm text-zinc-300">
                 <p className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> Lörrach / Germania / Svizzera</p>
+               
                 <p className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> WhatsApp DE: +49 172 438 5672</p>
                 <p className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> WhatsApp CH: +41 78 248 3401</p>
               </div>
