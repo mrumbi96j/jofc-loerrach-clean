@@ -38,11 +38,6 @@ Note: ${formData.notes}`
   };
   const [language, setLanguage] = useState("it");
 
-  const content = {
-    it: content_it,
-    de: content_de,
-  };
-
   const content_it = {
     nav: { home: "Home", matches: "Partite", tickets: "Biglietti", trophies: "Trofei", contact: "Contatti" },
     heroBadge: "Juventus Official Fan Club Lörrach G. Agnelli • Fino alla fine",
@@ -166,6 +161,10 @@ Note: ${formData.notes}`
     membersText: "Infos.",
     contactBoxTitle: "Info",
     footer: "JOFC Lörrach",
+  };
+  const content = {
+    it: content_it,
+    de: content_de,
   };
 
   const t = content[language] || content.it;
