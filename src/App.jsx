@@ -41,6 +41,20 @@ export default function App() {
     );
     const body = encodeURIComponent(
       `Nome: ${formData.firstName}\nCognome: ${formData.lastName}\nE-mail: ${formData.email}\nTelefono: ${formData.phone}\nPartita: ${formData.match}\nNumero biglietti: ${formData.quantity}\nCategoria: ${formData.membership}\nOpzione: ${formData.extras}\nNote: ${formData.notes}`
+   <select value={formData.sector} onChange={(e) => handleChange("sector", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2">
+  <option value="">{t.labels.sector}</option>
+  <option>Curva Sud 1° Anello</option>
+  <option>Curva Sud 2° Anello</option>
+  <option>Curva Nord 1° Anello</option>
+  <option>Curva Nord 2° Anello</option>
+  <option>Tribuna Est 1° Anello</option>
+  <option>Tribuna Est 2° Anello</option>
+  <option>Tribuna Ovest 1° Anello</option>
+  <option>Tribuna Ovest 2° Anello</option>
+  <option>Tribuna Family 1° Anello</option>
+  <option>Tribuna Family 2° Anello</option>
+  <option>Settore Ospiti</option>
+</select>
     );
     window.location.href = `mailto:jcdgagnelli@gmx.de?subject=${subject}&body=${body}`;
   };
