@@ -1,23 +1,8 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  CalendarDays,
-  Trophy,
-  Users,
-  Bus,
-  Mail,
-  Globe,
-  ShieldCheck,
-  ChevronRight,
-  Star,
-  MessageCircle,
-  ExternalLink,
-  MapPin,
-  Crown,
-  Ticket,
-} from "lucide-react";
+import { CalendarDays, Trophy, Users, Bus, Mail, Globe, ShieldCheck, ChevronRight, Star, MessageCircle, ExternalLink, MapPin, Crown, Ticket, Phone } from "lucide-react";
 
-export default function App() {
+export default function JOFCLoerrachWebsite() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -26,38 +11,32 @@ export default function App() {
     match: "",
     quantity: "",
     membership: "",
+    sector: "",
     extras: "",
     notes: "",
   });
-  const [language, setLanguage] = useState("it");
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = () => {
-    const subject = encodeURIComponent(
-      "Richiesta biglietti - Juventus Official Fan Club Lörrach G. Agnelli"
-    );
+    const subject = encodeURIComponent("Richiesta biglietti - Juventus Official Fan Club Lörrach G. Agnelli");
     const body = encodeURIComponent(
-      `Nome: ${formData.firstName}\nCognome: ${formData.lastName}\nE-mail: ${formData.email}\nTelefono: ${formData.phone}\nPartita: ${formData.match}\nNumero biglietti: ${formData.quantity}\nCategoria: ${formData.membership}\nOpzione: ${formData.extras}\nNote: ${formData.notes}`
-   <select value={formData.sector} onChange={(e) => handleChange("sector", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2">
-  <option value="">{t.labels.sector}</option>
-  <option>Curva Sud 1° Anello</option>
-  <option>Curva Sud 2° Anello</option>
-  <option>Curva Nord 1° Anello</option>
-  <option>Curva Nord 2° Anello</option>
-  <option>Tribuna Est 1° Anello</option>
-  <option>Tribuna Est 2° Anello</option>
-  <option>Tribuna Ovest 1° Anello</option>
-  <option>Tribuna Ovest 2° Anello</option>
-  <option>Tribuna Family 1° Anello</option>
-  <option>Tribuna Family 2° Anello</option>
-  <option>Settore Ospiti</option>
-</select>
+      `Nome: ${formData.firstName}
+Cognome: ${formData.lastName}
+E-mail: ${formData.email}
+Telefono: ${formData.phone}
+Partita: ${formData.match}
+Numero biglietti: ${formData.quantity}
+Categoria: ${formData.membership}
+Settore Allianz Stadium: ${formData.sector}
+Opzione: ${formData.extras}
+Note: ${formData.notes}`
     );
     window.location.href = `mailto:jcdgagnelli@gmx.de?subject=${subject}&body=${body}`;
   };
+  const [language, setLanguage] = useState("it");
 
   const content = {
     it: {
@@ -78,15 +57,14 @@ export default function App() {
       heroCardBadge: "Modalità IT / DE",
       ticketTitle: "Richiesta biglietti",
       ticketText:
-        "Compila il modulo per inviare una richiesta al club. In questa versione il modulo apre direttamente una e-mail pronta da inviare al club.",
+        "Compila il modulo per inviare una richiesta al club. Nella versione online definitiva il form potrà inviare i dati via e-mail, salvarli in un database e creare una gestione interna per il direttivo.",
       ticketsCta: "Invia richiesta",
       quickContact: "Contatto rapido",
       whatsappGermany: "WhatsApp Germania",
       whatsappSwitzerland: "WhatsApp Svizzera",
       emailDirect: "Scrivi una e-mail",
       memberAreaTitle: "Per soci e tifosi",
-      memberAreaText:
-        "Richieste biglietti, informazioni trasferte, priorità soci e contatto diretto con il club in un'unica piattaforma.",
+      memberAreaText: "Richieste biglietti, informazioni trasferte, priorità soci e contatto diretto con il club in un'unica piattaforma.",
       sectionMatches: "Partite della Juventus",
       sectionMatchesText:
         "Le partite qui sotto sono dimostrative. Nella versione finale possono essere collegate automaticamente a una fonte dati esterna con data, orario e stato disponibilità.",
@@ -97,138 +75,6 @@ export default function App() {
       contactText:
         "Possiamo aggiungere e-mail diretta, WhatsApp, modulo contatti, area soci e persino una lista d'attesa per le partite più richieste.",
       labels: {
-        firstName: "Nome",
-        lastName: "Cognome",
-        email: "E-mail",
-        phone: "Telefono",
-        match: "Partita",
-        quantity: "Numero biglietti",
-        membership: "Categoria",
-        extras: "Opzione",
-        notes: "Note / richieste speciali",
-        member: "Socio",
-        nonMember: "Non socio",
-        onlyTicket: "Solo biglietto",
-        ticketBus: "Biglietto + bus",
-        vip: "VIP / Hospitality",
-      },
-      cards: [
-        {
-          icon: Users,
-          title: "Area soci",
-          text: "Sezione dedicata ai soci con vantaggi, modulistica e priorità per i biglietti.",
-        },
-        {
-          icon: Bus,
-          title: "Trasferte",
-          text: "Bus, viaggi e organizzazione per seguire la Juventus in casa e in trasferta.",
-        },
-        {
-          icon: ShieldCheck,
-          title: "Richieste ordinate",
-          text: "Modulo strutturato per raccogliere dati completi e gestire meglio le prenotazioni.",
-        },
-      ],
-      packages: [
-        {
-          title: "Soci",
-          price: "Priorità club",
-          items: ["Richiesta prioritaria", "Comunicazioni dedicate", "Supporto diretto del club"],
-        },
-        {
-          title: "Non soci",
-          price: "Su disponibilità",
-          items: ["Richiesta standard", "Assegnazione in ordine", "Possibile lista d'attesa"],
-        },
-        {
-          title: "Bus & VIP",
-          price: "Su richiesta",
-          items: ["Pacchetti personalizzati", "Bus organizzato", "Esperienze speciali"],
-        },
-      ],
-      matches: [
-        {
-          competition: "Serie A",
-          home: "Juventus",
-          away: "Inter",
-          date: "05 Apr 2026",
-          time: "20:45",
-          status: "Richiesta aperta",
-        },
-        {
-          competition: "Coppa Italia",
-          home: "Milan",
-          away: "Juventus",
-          date: "09 Apr 2026",
-          time: "21:00",
-          status: "Lista d'attesa",
-        },
-        {
-          competition: "Serie A",
-          home: "Juventus",
-          away: "Roma",
-          date: "13 Apr 2026",
-          time: "18:00",
-          status: "Richiesta aperta",
-        },
-      ],
-      trophies: [
-        { label: "Scudetti", value: "38" },
-        { label: "Coppe Italia", value: "15" },
-        { label: "Supercoppe Italiane", value: "9" },
-        { label: "Champions League / Coppa dei Campioni", value: "2" },
-        { label: "Coppe UEFA", value: "3" },
-        { label: "Supercoppe UEFA", value: "2" },
-        { label: "Coppa delle Coppe", value: "1" },
-        { label: "Coppa Intercontinentale", value: "2" },
-      ],
-      travelTitle: "Trasferte del club",
-      travelText:
-        "Organizziamo viaggi, bus e supporto per vivere la Juventus insieme. Una sezione perfetta per pubblicare date, punti di ritrovo e informazioni utili per i tifosi.",
-      membersTitle: "Area soci",
-      membersText:
-        "Qui si possono aggiungere iscrizioni, vantaggi membri, regolamento del club e priorità per i biglietti.",
-      contactBoxTitle: "Informazioni ufficiali",
-      footer:
-        "Juventus Official Fan Club Lörrach G. Agnelli • Sito demo professionale del fan club",
-    },
-    de: {
-      nav: {
-        home: "Home",
-        matches: "Spiele",
-        tickets: "Tickets",
-        trophies: "Trophäen",
-        contact: "Kontakt",
-      },
-      heroBadge: "Juventus Official Fan Club Lörrach G. Agnelli • Fino alla fine",
-      heroTitle: "Der zentrale Treffpunkt unseres Juventus Fanclubs.",
-      heroText:
-        "Ticketanfragen, Juventus-Spiele, Auswärtsfahrten, Mitgliedervorteile und wichtige Infos in einer eleganten, schnellen und zweisprachigen Website. Für Fans gedacht, für den Club gebaut.",
-      heroPrimary: "Tickets anfragen",
-      heroSecondary: "Spiele ansehen",
-      heroCardTitle: "Nächste Spiele",
-      heroCardBadge: "IT / DE Modus",
-      ticketTitle: "Ticketanfrage",
-      ticketText:
-        "Fülle das Formular aus, um eine Anfrage an den Club zu senden. In dieser Version öffnet das Formular direkt eine vorbereitete E-Mail an den Club.",
-      ticketsCta: "Anfrage senden",
-      quickContact: "Schnellkontakt",
-      whatsappGermany: "WhatsApp Deutschland",
-      whatsappSwitzerland: "WhatsApp Schweiz",
-      emailDirect: "E-Mail schreiben",
-      memberAreaTitle: "Für Mitglieder und Fans",
-      memberAreaText:
-        "Ticketanfragen, Auswärtsinfos, Mitgliederpriorität und direkter Kontakt mit dem Club auf einer einzigen Plattform.",
-      sectionMatches: "Juventus-Spiele",
-      sectionMatchesText:
-        "Die untenstehenden Spiele sind Demo-Daten. In der finalen Version können sie automatisch mit externer Datenquelle, Datum, Uhrzeit und Verfügbarkeitsstatus verbunden werden.",
-      trophiesTitle: "Die Trophäen der Juventus",
-      trophiesText:
-        "Ein historischer Bereich für die Erfolge des Clubs – ideal, um der Fanclub-Website Prestige zu geben und die bianconere Identität zu stärken.",
-      contactTitle: "Club kontaktieren",
-      contactText:
-        "Wir können direkte E-Mail, WhatsApp, Kontaktformular, Mitgliederbereich und sogar eine Warteliste für besonders gefragte Spiele ergänzen.",
-      labels: {
         firstName: "Vorname",
         lastName: "Nachname",
         email: "E-Mail",
@@ -236,6 +82,7 @@ export default function App() {
         match: "Spiel",
         quantity: "Anzahl Tickets",
         membership: "Kategorie",
+        sector: "Bereich Allianz Stadium",
         extras: "Option",
         notes: "Bemerkungen / spezielle Wünsche",
         member: "Mitglied",
@@ -315,24 +162,19 @@ export default function App() {
         { label: "Weltpokal", value: "2" },
       ],
       travelTitle: "Club-Reisen",
-      travelText:
-        "Wir organisieren Fahrten, Busse und Unterstützung, um Juventus gemeinsam zu erleben. Ein perfekter Bereich für Termine, Treffpunkte und wichtige Infos für Fans.",
+      travelText: "Wir organisieren Fahrten, Busse und Unterstützung, um Juventus gemeinsam zu erleben. Ein perfekter Bereich für Termine, Treffpunkte und wichtige Infos für Fans.",
       membersTitle: "Mitgliederbereich",
-      membersText:
-        "Hier können Mitgliedschaften, Vorteile, Club-Reglement und Ticket-Prioritäten ergänzt werden.",
+      membersText: "Hier können Mitgliedschaften, Vorteile, Club-Reglement und Ticket-Prioritäten ergänzt werden.",
       contactBoxTitle: "Offizielle Informationen",
-      footer:
-        "Juventus Official Fan Club Lörrach G. Agnelli • Professionelle Demo-Website des Fanclubs",
+      footer: "Juventus Official Fan Club Lörrach G. Agnelli • Professionelle Demo-Website des Fanclubs",
     },
   };
 
   const t = content[language];
+
   const officialEmail = "jcdgagnelli@gmx.de";
   const whatsappDe = "https://wa.me/491724385672";
   const whatsappCh = "https://wa.me/41782483401";
-  const emailSubject = encodeURIComponent(
-    "Juventus Official Fan Club Lörrach G. Agnelli"
-  );
 
   const features = useMemo(() => t.cards, [t]);
 
@@ -354,9 +196,7 @@ export default function App() {
           <div className="flex items-center gap-4">
             <JuveMark />
             <div>
-              <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">
-                Juventus Official Fan Club
-              </p>
+              <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">Juventus Official Fan Club</p>
               <h1 className="text-2xl font-black tracking-tight">Lörrach G. Agnelli</h1>
             </div>
           </div>
@@ -372,17 +212,13 @@ export default function App() {
             <div className="flex items-center rounded-full border border-white/10 bg-white/5 p-1">
               <button
                 onClick={() => setLanguage("it")}
-                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                  language === "it" ? "bg-white text-black" : "text-zinc-300"
-                }`}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${language === "it" ? "bg-white text-black" : "text-zinc-300"}`}
               >
                 IT
               </button>
               <button
                 onClick={() => setLanguage("de")}
-                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                  language === "de" ? "bg-white text-black" : "text-zinc-300"
-                }`}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${language === "de" ? "bg-white text-black" : "text-zinc-300"}`}
               >
                 DE
               </button>
@@ -423,14 +259,14 @@ export default function App() {
               <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">{t.memberAreaText}</p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <a
-                  href={`mailto:${officialEmail}?subject=${emailSubject}`}
+                  href="mailto:jcdgagnelli@gmx.de?subject=Richiesta%20informazioni%20Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/60"
                 >
                   <Mail className="h-4 w-4" />
                   {t.emailDirect}
                 </a>
                 <a
-                  href={whatsappDe}
+                  href="https://wa.me/491724385672"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/60"
@@ -439,7 +275,7 @@ export default function App() {
                   {t.whatsappGermany}
                 </a>
                 <a
-                  href={whatsappCh}
+                  href="https://wa.me/41782483401"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/60"
@@ -498,6 +334,12 @@ export default function App() {
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
               <h3 className="text-3xl font-black">{t.ticketTitle}</h3>
               <p className="mt-3 max-w-2xl text-zinc-300">{t.ticketText}</p>
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-300">
+                <p className="font-semibold">Allianz Stadium</p>
+                <p className="mt-2 text-zinc-400">
+                  I soci possono indicare il settore desiderato, incluse curve e tribune con 1° e 2° anello, così il club può gestire le richieste in modo più preciso.
+                </p>
+              </div>
 
               <form className="mt-6 grid gap-4 md:grid-cols-2" onSubmit={(e) => e.preventDefault()}>
                 <input value={formData.firstName} onChange={(e) => handleChange("firstName", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500" placeholder={t.labels.firstName} />
@@ -521,6 +363,20 @@ export default function App() {
                   <option value="">{t.labels.membership}</option>
                   <option>{t.labels.member}</option>
                   <option>{t.labels.nonMember}</option>
+                </select>
+                <select value={formData.sector} onChange={(e) => handleChange("sector", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2">
+                  <option value="">{t.labels.sector}</option>
+                  <option>Curva Sud 1° Anello</option>
+                  <option>Curva Sud 2° Anello</option>
+                  <option>Curva Nord 1° Anello</option>
+                  <option>Curva Nord 2° Anello</option>
+                  <option>Tribuna Est 1° Anello</option>
+                  <option>Tribuna Est 2° Anello</option>
+                  <option>Tribuna Ovest 1° Anello</option>
+                  <option>Tribuna Ovest 2° Anello</option>
+                  <option>Tribuna Family 1° Anello</option>
+                  <option>Tribuna Family 2° Anello</option>
+                  <option>Settore Ospiti</option>
                 </select>
                 <select value={formData.extras} onChange={(e) => handleChange("extras", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none">
                   <option value="">{t.labels.extras}</option>
@@ -567,8 +423,8 @@ export default function App() {
               <p className="mt-3 text-zinc-300">{t.travelText}</p>
               <div className="mt-5 space-y-3 text-sm text-zinc-300">
                 <p className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> Lörrach / Germania / Svizzera</p>
-                <p className="inline-flex items-center gap-2"><MessageCircle className="h-4 w-4" /> WhatsApp DE: +49 172 438 5672</p>
-                <p className="inline-flex items-center gap-2"><MessageCircle className="h-4 w-4" /> WhatsApp CH: +41 78 248 3401</p>
+                <p className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> WhatsApp DE: +49 172 438 5672</p>
+                <p className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> WhatsApp CH: +41 78 248 3401</p>
               </div>
             </div>
 
@@ -655,29 +511,48 @@ export default function App() {
                 </p>
                 <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-500">{t.contactBoxTitle}</p>
                 <div className="space-y-3 text-sm text-zinc-300">
-                  <a href={`mailto:${officialEmail}?subject=${emailSubject}`} className="inline-flex items-center gap-2 transition hover:text-white">
-                    <Mail className="h-4 w-4" /> {officialEmail}
+                  <a
+                    href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
+                    className="inline-flex items-center gap-2 transition hover:text-white"
+                  >
+                    <Mail className="h-4 w-4" /> jcdgagnelli@gmx.de
                   </a>
-                  <a href={whatsappDe} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 transition hover:text-white">
+                  <a
+                    href="https://wa.me/491724385672"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 transition hover:text-white"
+                  >
                     <MessageCircle className="h-4 w-4" /> {t.whatsappGermany}
                   </a>
-                  <a href={whatsappCh} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 transition hover:text-white">
+                  <a
+                    href="https://wa.me/41782483401"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 transition hover:text-white"
+                  >
                     <MessageCircle className="h-4 w-4" /> {t.whatsappSwitzerland}
                   </a>
                 </div>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <a href={`mailto:${officialEmail}?subject=${emailSubject}`} className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:scale-[1.02]">
+                  <a
+                    href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
+                    className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:scale-[1.02]"
+                  >
                     {t.emailDirect}
                     <ExternalLink className="h-4 w-4" />
                   </a>
-                  <a href={whatsappDe} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10">
+                  <a
+                    href="https://wa.me/491724385672"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
                     {t.whatsappGermany}
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </div>
-                <p className="mt-4 text-sm text-zinc-500">
-                  Modulo contatti, WhatsApp diretto, area soci e workflow biglietti possono essere collegati nella versione finale pubblicata.
-                </p>
+                <p className="mt-4 text-sm text-zinc-500">Modulo contatti, WhatsApp diretto, area soci e workflow biglietti possono essere collegati nella versione finale pubblicata.</p>
               </div>
             </div>
           </div>
