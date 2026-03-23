@@ -1,22 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  CalendarDays,
-  Trophy,
-  Users,
-  Bus,
-  Mail,
-  Globe,
-  ShieldCheck,
-  ChevronRight,
-  Star,
-  MessageCircle,
-  ExternalLink,
-  MapPin,
-  Crown,
-  Ticket,
-  Phone,
-} from "lucide-react";
+import { CalendarDays, Trophy, Users, Bus, Mail, Globe, ShieldCheck, ChevronRight, Star, MessageCircle, ExternalLink, MapPin, Crown, Ticket, Phone } from "lucide-react";
 
 export default function JOFCLoerrachWebsite() {
   const [formData, setFormData] = useState({
@@ -32,16 +16,12 @@ export default function JOFCLoerrachWebsite() {
     notes: "",
   });
 
-  const [language, setLanguage] = useState("it");
-
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = () => {
-    const subject = encodeURIComponent(
-      "Richiesta biglietti - Juventus Official Fan Club Lörrach G. Agnelli"
-    );
+    const subject = encodeURIComponent("Richiesta biglietti - Juventus Official Fan Club Lörrach G. Agnelli");
     const body = encodeURIComponent(
       `Nome: ${formData.firstName}
 Cognome: ${formData.lastName}
@@ -54,22 +34,15 @@ Settore Allianz Stadium: ${formData.sector}
 Opzione: ${formData.extras}
 Note: ${formData.notes}`
     );
-
     window.location.href = `mailto:jcdgagnelli@gmx.de?subject=${subject}&body=${body}`;
   };
+  const [language, setLanguage] = useState("it");
 
   const content_it = {
-    nav: {
-      home: "Home",
-      matches: "Partite",
-      tickets: "Biglietti",
-      trophies: "Trofei",
-      contact: "Contatti",
-    },
+    nav: { home: "Home", matches: "Partite", tickets: "Biglietti", trophies: "Trofei", contact: "Contatti" },
     heroBadge: "Juventus Official Fan Club Lörrach G. Agnelli • Fino alla fine",
     heroTitle: "Il punto di riferimento del nostro Juventus Fan Club.",
-    heroText:
-      "Richieste biglietti, partite della Juventus, trasferte, vantaggi soci e informazioni utili in un sito elegante, veloce e bilingue.",
+    heroText: "Richieste biglietti, partite della Juventus, trasferte, vantaggi soci e informazioni utili in un sito elegante, veloce e bilingue.",
     heroPrimary: "Richiedi biglietti",
     heroSecondary: "Guarda le partite",
     heroCardTitle: "Prossime partite",
@@ -112,31 +85,12 @@ Note: ${formData.notes}`
       { icon: ShieldCheck, title: "Richieste", text: "Gestione richieste." },
     ],
     packages: [
-      {
-        title: "Soci",
-        price: "Priorità",
-        items: ["Priorità", "Info", "Supporto"],
-      },
-      {
-        title: "Non soci",
-        price: "Disponibilità",
-        items: ["Standard", "Ordine", "Attesa"],
-      },
-      {
-        title: "Bus & VIP",
-        price: "Su richiesta",
-        items: ["Pacchetti", "Bus", "VIP"],
-      },
+      { title: "Soci", price: "Priorità", items: ["Priorità", "Info", "Supporto"] },
+      { title: "Non soci", price: "Disponibilità", items: ["Standard", "Ordine", "Attesa"] },
+      { title: "Bus & VIP", price: "Su richiesta", items: ["Pacchetti", "Bus", "VIP"] },
     ],
     matches: [
-      {
-        competition: "Serie A",
-        home: "Juventus",
-        away: "Inter",
-        date: "05 Apr",
-        time: "20:45",
-        status: "Richiesta aperta",
-      },
+      { competition: "Serie A", home: "Juventus", away: "Inter", date: "05 Apr", time: "20:45", status: "Richiesta aperta" },
     ],
     trophies: [{ label: "Scudetti", value: "38" }],
     travelTitle: "Trasferte",
@@ -148,13 +102,7 @@ Note: ${formData.notes}`
   };
 
   const content_de = {
-    nav: {
-      home: "Start",
-      matches: "Spiele",
-      tickets: "Tickets",
-      trophies: "Trophäen",
-      contact: "Kontakt",
-    },
+    nav: { home: "Start", matches: "Spiele", tickets: "Tickets", trophies: "Trophäen", contact: "Kontakt" },
     heroBadge: "Juventus Official Fan Club Lörrach G. Agnelli",
     heroTitle: "Der Treffpunkt unseres Juventus Fanclubs.",
     heroText: "Ticketanfragen, Spiele und Reisen.",
@@ -201,21 +149,10 @@ Note: ${formData.notes}`
     ],
     packages: [
       { title: "Mitglieder", price: "Priorität", items: ["Priorität"] },
-      {
-        title: "Nicht-Mitglieder",
-        price: "Verfügbarkeit",
-        items: ["Standard"],
-      },
+      { title: "Nicht-Mitglieder", price: "Verfügbarkeit", items: ["Standard"] },
     ],
     matches: [
-      {
-        competition: "Serie A",
-        home: "Juventus",
-        away: "Inter",
-        date: "05 Apr",
-        time: "20:45",
-        status: "Offen",
-      },
+      { competition: "Serie A", home: "Juventus", away: "Inter", date: "05 Apr", time: "20:45", status: "Offen" },
     ],
     trophies: [{ label: "Titel", value: "38" }],
     travelTitle: "Reisen",
@@ -225,13 +162,16 @@ Note: ${formData.notes}`
     contactBoxTitle: "Info",
     footer: "JOFC Lörrach",
   };
-
   const content = {
     it: content_it,
     de: content_de,
   };
 
   const t = content[language] || content.it;
+
+  const officialEmail = "jcdgagnelli@gmx.de";
+  const whatsappDe = "https://wa.me/491724385672";
+  const whatsappCh = "https://wa.me/41782483401";
 
   const features = useMemo(() => t.cards, [t]);
 
@@ -253,48 +193,29 @@ Note: ${formData.notes}`
           <div className="flex items-center gap-4">
             <JuveMark />
             <div>
-              <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">
-                Juventus Official Fan Club
-              </p>
-              <h1 className="text-2xl font-black tracking-tight">
-                Lörrach G. Agnelli
-              </h1>
+              <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">Juventus Official Fan Club</p>
+              <h1 className="text-2xl font-black tracking-tight">Lörrach G. Agnelli</h1>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             <nav className="hidden items-center gap-6 text-sm text-zinc-300 md:flex">
-              <a href="#home" className="hover:text-white">
-                {t.nav.home}
-              </a>
-              <a href="#matches" className="hover:text-white">
-                {t.nav.matches}
-              </a>
-              <a href="#tickets" className="hover:text-white">
-                {t.nav.tickets}
-              </a>
-              <a href="#trophies" className="hover:text-white">
-                {t.nav.trophies}
-              </a>
-              <a href="#contact" className="hover:text-white">
-                {t.nav.contact}
-              </a>
+              <a href="#home" className="hover:text-white">{t.nav.home}</a>
+              <a href="#matches" className="hover:text-white">{t.nav.matches}</a>
+              <a href="#tickets" className="hover:text-white">{t.nav.tickets}</a>
+              <a href="#trophies" className="hover:text-white">{t.nav.trophies}</a>
+              <a href="#contact" className="hover:text-white">{t.nav.contact}</a>
             </nav>
-
             <div className="flex items-center rounded-full border border-white/10 bg-white/5 p-1">
               <button
                 onClick={() => setLanguage("it")}
-                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                  language === "it" ? "bg-white text-black" : "text-zinc-300"
-                }`}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${language === "it" ? "bg-white text-black" : "text-zinc-300"}`}
               >
                 IT
               </button>
               <button
                 onClick={() => setLanguage("de")}
-                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                  language === "de" ? "bg-white text-black" : "text-zinc-300"
-                }`}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${language === "de" ? "bg-white text-black" : "text-zinc-300"}`}
               >
                 DE
               </button>
@@ -304,62 +225,35 @@ Note: ${formData.notes}`
       </header>
 
       <main className="relative z-10">
-        <section
-          id="home"
-          className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.1fr_0.9fr] md:py-20"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
+        <section id="home" className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.1fr_0.9fr] md:py-20">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-zinc-300">
               <Star className="h-3.5 w-3.5" />
               {t.heroBadge}
             </div>
 
             <div className="space-y-4">
-              <h2 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">
-                {t.heroTitle}
-              </h2>
-              <p className="max-w-2xl text-base leading-7 text-zinc-300 md:text-lg">
-                {t.heroText}
-              </p>
-
+              <h2 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">{t.heroTitle}</h2>
+              <p className="max-w-2xl text-base leading-7 text-zinc-300 md:text-lg">{t.heroText}</p>
               <div className="flex flex-wrap gap-3 text-sm text-zinc-300">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  <Ticket className="h-4 w-4" /> Ticket request
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  <Bus className="h-4 w-4" /> Trasferte / Reisen
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  <Crown className="h-4 w-4" /> Soci & Priorità
-                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2"><Ticket className="h-4 w-4" /> Ticket request</span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2"><Bus className="h-4 w-4" /> Trasferte / Reisen</span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2"><Crown className="h-4 w-4" /> Soci & Priorità</span>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <a
-                href="#tickets"
-                className="rounded-2xl bg-white px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-[1.02]"
-              >
+              <a href="#tickets" className="rounded-2xl bg-white px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-[1.02]">
                 {t.heroPrimary}
               </a>
-              <a
-                href="#matches"
-                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 font-semibold text-white transition hover:bg-white/10"
-              >
+              <a href="#matches" className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 font-semibold text-white transition hover:bg-white/10">
                 {t.heroSecondary}
               </a>
             </div>
 
             <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-xl">
               <p className="text-sm font-semibold">{t.memberAreaTitle}</p>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
-                {t.memberAreaText}
-              </p>
-
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">{t.memberAreaText}</p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <a
                   href="mailto:jcdgagnelli@gmx.de?subject=Richiesta%20informazioni%20Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
@@ -368,7 +262,6 @@ Note: ${formData.notes}`
                   <Mail className="h-4 w-4" />
                   {t.emailDirect}
                 </a>
-
                 <a
                   href="https://wa.me/491724385672"
                   target="_blank"
@@ -378,7 +271,6 @@ Note: ${formData.notes}`
                   <MessageCircle className="h-4 w-4" />
                   {t.whatsappGermany}
                 </a>
-
                 <a
                   href="https://wa.me/41782483401"
                   target="_blank"
@@ -395,34 +287,22 @@ Note: ${formData.notes}`
               {features.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div
-                    key={index}
-                    className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 shadow-xl"
-                  >
+                  <div key={index} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 shadow-xl">
                     <Icon className="mb-3 h-5 w-5 text-white" />
                     <p className="text-sm font-semibold">{item.title}</p>
-                    <p className="mt-2 text-sm leading-6 text-zinc-400">
-                      {item.text}
-                    </p>
+                    <p className="mt-2 text-sm leading-6 text-zinc-400">{item.text}</p>
                   </div>
                 );
               })}
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-2xl"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-2xl">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.25em] text-zinc-400">
-                  Black & White
-                </p>
+                <p className="text-xs uppercase tracking-[0.25em] text-zinc-400">Black & White</p>
                 <h3 className="text-xl font-bold">{t.heroCardTitle}</h3>
               </div>
-
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs text-zinc-200">
                 <Globe className="h-3.5 w-3.5" />
                 {t.heroCardBadge}
@@ -431,26 +311,14 @@ Note: ${formData.notes}`
 
             <div className="space-y-3">
               {t.matches.map((match, index) => (
-                <div
-                  key={index}
-                  className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
-                >
+                <div key={index} className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60">
                   <div className="mb-2 flex items-center justify-between gap-3">
-                    <span className="text-xs uppercase tracking-wide text-zinc-400">
-                      {match.competition}
-                    </span>
-                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
-                      {match.status}
-                    </span>
+                    <span className="text-xs uppercase tracking-wide text-zinc-400">{match.competition}</span>
+                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">{match.status}</span>
                   </div>
-
-                  <p className="text-lg font-bold">
-                    {match.home} vs {match.away}
-                  </p>
-
+                  <p className="text-lg font-bold">{match.home} vs {match.away}</p>
                   <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
-                    <CalendarDays className="h-4 w-4" /> {match.date} •{" "}
-                    {match.time}
+                    <CalendarDays className="h-4 w-4" /> {match.date} • {match.time}
                   </p>
                 </div>
               ))}
@@ -463,79 +331,37 @@ Note: ${formData.notes}`
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
               <h3 className="text-3xl font-black">{t.ticketTitle}</h3>
               <p className="mt-3 max-w-2xl text-zinc-300">{t.ticketText}</p>
-
               <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-300">
                 <p className="font-semibold">Allianz Stadium</p>
                 <p className="mt-2 text-zinc-400">
-                  I soci possono indicare il settore desiderato, incluse curve e
-                  tribune con 1° e 2° anello, così il club può gestire le
-                  richieste in modo più preciso.
+                  I soci possono indicare il settore desiderato, incluse curve e tribune con 1° e 2° anello, così il club può gestire le richieste in modo più preciso.
                 </p>
               </div>
 
-              <form
-                className="mt-6 grid gap-4 md:grid-cols-2"
-                onSubmit={(e) => e.preventDefault()}
-              >
-                <input
-                  value={formData.firstName}
-                  onChange={(e) => handleChange("firstName", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
-                  placeholder={t.labels.firstName}
-                />
-                <input
-                  value={formData.lastName}
-                  onChange={(e) => handleChange("lastName", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
-                  placeholder={t.labels.lastName}
-                />
-                <input
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
-                  placeholder={t.labels.email}
-                />
-                <input
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
-                  placeholder={t.labels.phone}
-                />
-                <select
-                  value={formData.match}
-                  onChange={(e) => handleChange("match", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
-                >
+              <form className="mt-6 grid gap-4 md:grid-cols-2" onSubmit={(e) => e.preventDefault()}>
+                <input value={formData.firstName} onChange={(e) => handleChange("firstName", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500" placeholder={t.labels.firstName} />
+                <input value={formData.lastName} onChange={(e) => handleChange("lastName", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500" placeholder={t.labels.lastName} />
+                <input value={formData.email} onChange={(e) => handleChange("email", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500" placeholder={t.labels.email} />
+                <input value={formData.phone} onChange={(e) => handleChange("phone", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500" placeholder={t.labels.phone} />
+                <select value={formData.match} onChange={(e) => handleChange("match", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none">
                   <option value="">{t.labels.match}</option>
                   <option>Juventus vs Inter</option>
                   <option>Milan vs Juventus</option>
                   <option>Juventus vs Roma</option>
                 </select>
-                <select
-                  value={formData.quantity}
-                  onChange={(e) => handleChange("quantity", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
-                >
+                <select value={formData.quantity} onChange={(e) => handleChange("quantity", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none">
                   <option value="">{t.labels.quantity}</option>
                   <option>1</option>
                   <option>2</option>
                   <option>3</option>
                   <option>4</option>
                 </select>
-                <select
-                  value={formData.membership}
-                  onChange={(e) => handleChange("membership", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
-                >
+                <select value={formData.membership} onChange={(e) => handleChange("membership", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none">
                   <option value="">{t.labels.membership}</option>
                   <option>{t.labels.member}</option>
                   <option>{t.labels.nonMember}</option>
                 </select>
-                <select
-                  value={formData.sector}
-                  onChange={(e) => handleChange("sector", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2"
-                >
+                <select value={formData.sector} onChange={(e) => handleChange("sector", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2">
                   <option value="">{t.labels.sector}</option>
                   <option>Curva Sud 1° Anello</option>
                   <option>Curva Sud 2° Anello</option>
@@ -549,27 +375,14 @@ Note: ${formData.notes}`
                   <option>Tribuna Family 2° Anello</option>
                   <option>Settore Ospiti</option>
                 </select>
-                <select
-                  value={formData.extras}
-                  onChange={(e) => handleChange("extras", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
-                >
+                <select value={formData.extras} onChange={(e) => handleChange("extras", e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none">
                   <option value="">{t.labels.extras}</option>
                   <option>{t.labels.onlyTicket}</option>
                   <option>{t.labels.ticketBus}</option>
                   <option>{t.labels.vip}</option>
                 </select>
-                <textarea
-                  value={formData.notes}
-                  onChange={(e) => handleChange("notes", e.target.value)}
-                  className="min-h-[130px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2"
-                  placeholder={t.labels.notes}
-                />
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-[1.01] md:col-span-2"
-                >
+                <textarea value={formData.notes} onChange={(e) => handleChange("notes", e.target.value)} className="min-h-[130px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2" placeholder={t.labels.notes} />
+                <button type="button" onClick={handleSubmit} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 font-semibold text-black md:col-span-2 shadow-lg transition hover:scale-[1.01]">
                   {t.ticketsCta}
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -578,22 +391,14 @@ Note: ${formData.notes}`
 
             <div className="space-y-4">
               {t.packages.map((item, index) => (
-                <div
-                  key={index}
-                  className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl"
-                >
+                <div key={index} className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h4 className="text-xl font-bold">{item.title}</h4>
-                      <p className="mt-1 text-sm text-zinc-400">
-                        Juventus Official Fan Club Lörrach G. Agnelli
-                      </p>
+                      <p className="mt-1 text-sm text-zinc-400">Juventus Official Fan Club Lörrach G. Agnelli</p>
                     </div>
-                    <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold">
-                      {item.price}
-                    </span>
+                    <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold">{item.price}</span>
                   </div>
-
                   <ul className="mt-4 space-y-2 text-sm text-zinc-300">
                     {item.items.map((point, idx) => (
                       <li key={idx}>• {point}</li>
@@ -611,25 +416,12 @@ Note: ${formData.notes}`
               <div className="mb-4 inline-flex rounded-2xl bg-white p-3 text-black">
                 <Bus className="h-6 w-6" />
               </div>
-
               <h3 className="text-3xl font-black">{t.travelTitle}</h3>
               <p className="mt-3 text-zinc-300">{t.travelText}</p>
-
-              <div className="mt-5 flex flex-col gap-3 text-sm text-zinc-300">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 shrink-0" />
-                  <span>Lörrach / Germania / Svizzera</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 shrink-0" />
-                  <span>WhatsApp DE: +49 172 438 5672</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 shrink-0" />
-                  <span>WhatsApp CH: +41 78 248 3401</span>
-                </div>
+              <div className="mt-5 space-y-3 text-sm text-zinc-300">
+                <p className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> Lörrach / Germania / Svizzera</p>
+                <p className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> WhatsApp DE: +49 172 438 5672</p>
+                <p className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> WhatsApp CH: +41 78 248 3401</p>
               </div>
             </div>
 
@@ -637,23 +429,13 @@ Note: ${formData.notes}`
               <div className="mb-4 inline-flex rounded-2xl bg-white p-3 text-black">
                 <Users className="h-6 w-6" />
               </div>
-
               <h3 className="text-3xl font-black">{t.membersTitle}</h3>
               <p className="mt-3 text-zinc-300">{t.membersText}</p>
-
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
-                  Priorità richieste biglietti / Ticket-Priorität
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
-                  Comunicazioni dedicate / Direkte Infos
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
-                  Supporto trasferte / Reise-Support
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
-                  Contatto diretto col club / Direkter Kontakt
-                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">Priorità richieste biglietti / Ticket-Priorität</div>
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">Comunicazioni dedicate / Direkte Infos</div>
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">Supporto trasferte / Reise-Support</div>
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">Contatto diretto col club / Direkter Kontakt</div>
               </div>
             </div>
           </div>
@@ -662,32 +444,17 @@ Note: ${formData.notes}`
         <section id="matches" className="mx-auto max-w-7xl px-6 py-8">
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
             <h3 className="text-3xl font-black">{t.sectionMatches}</h3>
-            <p className="mt-3 max-w-3xl text-zinc-300">
-              {t.sectionMatchesText}
-            </p>
+            <p className="mt-3 max-w-3xl text-zinc-300">{t.sectionMatchesText}</p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {t.matches.map((match, index) => (
-                <div
-                  key={index}
-                  className="rounded-[1.5rem] border border-white/10 bg-black/40 p-5"
-                >
-                  <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">
-                    {match.competition}
-                  </p>
-                  <p className="mt-3 text-xl font-bold leading-tight">
-                    {match.home}
-                  </p>
+                <div key={index} className="rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
+                  <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">{match.competition}</p>
+                  <p className="mt-3 text-xl font-bold leading-tight">{match.home}</p>
                   <p className="text-sm text-zinc-500">vs</p>
-                  <p className="text-xl font-bold leading-tight">
-                    {match.away}
-                  </p>
-                  <p className="mt-4 text-sm text-zinc-400">
-                    {match.date} • {match.time}
-                  </p>
-                  <p className="mt-2 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
-                    {match.status}
-                  </p>
+                  <p className="text-xl font-bold leading-tight">{match.away}</p>
+                  <p className="mt-4 text-sm text-zinc-400">{match.date} • {match.time}</p>
+                  <p className="mt-2 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">{match.status}</p>
                 </div>
               ))}
             </div>
@@ -702,40 +469,26 @@ Note: ${formData.notes}`
                   <Trophy className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">
-                    Juventus
-                  </p>
+                  <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">Juventus</p>
                   <h3 className="text-3xl font-black">{t.trophiesTitle}</h3>
                 </div>
               </div>
-
               <p className="max-w-xl text-zinc-300">{t.trophiesText}</p>
 
               <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
-                <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
-                  1897
-                </p>
-                <p className="mt-3 text-2xl font-black">
-                  Juventus • Black & White Legacy
-                </p>
+                <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">1897</p>
+                <p className="mt-3 text-2xl font-black">Juventus • Black & White Legacy</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Sezione pensata per valorizzare la storia del club con un look
-                  moderno ispirato ai colori bianconeri e a un monogramma a
-                  forma di J nello stile Juventus.
+                  Sezione pensata per valorizzare la storia del club con un look moderno ispirato ai colori bianconeri e a un monogramma a forma di J nello stile Juventus.
                 </p>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {t.trophies.map((item, index) => (
-                <div
-                  key={index}
-                  className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-xl"
-                >
+                <div key={index} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-xl">
                   <p className="text-4xl font-black">{item.value}</p>
-                  <p className="mt-2 text-sm leading-6 text-zinc-300">
-                    {item.label}
-                  </p>
+                  <p className="mt-2 text-sm leading-6 text-zinc-300">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -749,15 +502,11 @@ Note: ${formData.notes}`
                 <h3 className="text-3xl font-black">{t.contactTitle}</h3>
                 <p className="mt-3 max-w-2xl text-zinc-300">{t.contactText}</p>
               </div>
-
               <div className="rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
                 <p className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-zinc-200">
                   <Globe className="h-4 w-4" /> {t.quickContact}
                 </p>
-                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-500">
-                  {t.contactBoxTitle}
-                </p>
-
+                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-500">{t.contactBoxTitle}</p>
                 <div className="space-y-3 text-sm text-zinc-300">
                   <a
                     href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
@@ -765,28 +514,23 @@ Note: ${formData.notes}`
                   >
                     <Mail className="h-4 w-4" /> jcdgagnelli@gmx.de
                   </a>
-
                   <a
                     href="https://wa.me/491724385672"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 transition hover:text-white"
                   >
-                    <MessageCircle className="h-4 w-4" />{" "}
-                    {t.whatsappGermany}
+                    <MessageCircle className="h-4 w-4" /> {t.whatsappGermany}
                   </a>
-
                   <a
                     href="https://wa.me/41782483401"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 transition hover:text-white"
                   >
-                    <MessageCircle className="h-4 w-4" />{" "}
-                    {t.whatsappSwitzerland}
+                    <MessageCircle className="h-4 w-4" /> {t.whatsappSwitzerland}
                   </a>
                 </div>
-
                 <div className="mt-5 flex flex-wrap gap-3">
                   <a
                     href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
@@ -795,7 +539,6 @@ Note: ${formData.notes}`
                     {t.emailDirect}
                     <ExternalLink className="h-4 w-4" />
                   </a>
-
                   <a
                     href="https://wa.me/491724385672"
                     target="_blank"
@@ -806,12 +549,7 @@ Note: ${formData.notes}`
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </div>
-
-                <p className="mt-4 text-sm text-zinc-500">
-                  Modulo contatti, WhatsApp diretto, area soci e workflow
-                  biglietti possono essere collegati nella versione finale
-                  pubblicata.
-                </p>
+                <p className="mt-4 text-sm text-zinc-500">Modulo contatti, WhatsApp diretto, area soci e workflow biglietti possono essere collegati nella versione finale pubblicata.</p>
               </div>
             </div>
           </div>
