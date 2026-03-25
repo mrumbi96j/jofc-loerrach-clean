@@ -749,41 +749,45 @@ Note: ${formData.notes}`
                 <p className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-zinc-200">
                   <Globe className="h-4 w-4" /> {t.quickContact}
                 </p>
+
                 <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-500">
                   {t.contactBoxTitle}
                 </p>
 
-                <div className="space-y-3 text-sm text-zinc-300">
+                <div className="space-y-4 text-sm text-zinc-300">
                   <a
                     href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
-                    className="inline-flex items-center gap-2 transition hover:text-white"
+                    className="flex items-center gap-3 transition hover:text-white"
                   >
-                    <Mail className="h-4 w-4" /> jcdgagnelli@gmx.de
+                    <Mail className="h-4 w-4 shrink-0" />
+                    <span className="break-all">jcdgagnelli@gmx.de</span>
                   </a>
 
                   <a
                     href="https://wa.me/491724385672"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 transition hover:text-white"
+                    className="flex items-center gap-3 transition hover:text-white"
                   >
-                    <MessageCircle className="h-4 w-4" /> {t.whatsappGermany}
+                    <MessageCircle className="h-4 w-4 shrink-0" />
+                    <span>{t.whatsappGermany}</span>
                   </a>
 
                   <a
                     href="https://wa.me/41782483401"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 transition hover:text-white"
+                    className="flex items-center gap-3 transition hover:text-white"
                   >
-                    <MessageCircle className="h-4 w-4" /> {t.whatsappSwitzerland}
+                    <MessageCircle className="h-4 w-4 shrink-0" />
+                    <span>{t.whatsappSwitzerland}</span>
                   </a>
                 </div>
 
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-6 flex flex-col gap-3">
                   <a
                     href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach%20G.%20Agnelli"
-                    className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:scale-[1.02]"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
                   >
                     {t.emailDirect}
                     <ExternalLink className="h-4 w-4" />
@@ -793,14 +797,24 @@ Note: ${formData.notes}`
                     href="https://wa.me/491724385672"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                   >
                     {t.whatsappGermany}
                     <ExternalLink className="h-4 w-4" />
                   </a>
+
+                  <a
+                    href="https://wa.me/41782483401"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    {t.whatsappSwitzerland}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
                 </div>
 
-                <p className="mt-4 text-sm text-zinc-500">
+                <p className="mt-4 text-sm leading-6 text-zinc-500">
                   Modulo contatti, WhatsApp diretto, area soci e workflow biglietti
                   possono essere collegati nella versione finale pubblicata.
                 </p>
