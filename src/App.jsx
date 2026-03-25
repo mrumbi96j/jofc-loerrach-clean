@@ -1020,7 +1020,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                   </a>
 
                   <a
-                    href="https://wa.me/491724385672"
+                    href="https://wa.me/491724385671"
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-3 transition hover:text-white"
@@ -1050,7 +1050,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                   </a>
 
                   <a
-                    href="https://wa.me/491724385672"
+                    href="https://wa.me/491724385671"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
