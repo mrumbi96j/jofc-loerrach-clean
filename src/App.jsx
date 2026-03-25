@@ -42,10 +42,10 @@ export default function JOFCLoerrachWebsite() {
 
     emailjs
       .send(
-        "SERVICE_ID",   // <-- sostituisci
-        "TEMPLATE_ID",  // <-- sostituisci
+        "service_fb1gqc1",   // <-- sostituisci
+        "template_73zulhg",  // <-- sostituisci
         formData,
-        "PUBLIC_KEY"    // <-- sostituisci
+        "2RslMdWoD6NI3cTiS"    // <-- sostituisci
       )
       .then(() => {
         alert("Richiesta inviata con successo!");
