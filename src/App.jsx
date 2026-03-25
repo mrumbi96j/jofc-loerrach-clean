@@ -125,6 +125,41 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
     }
   };
 
+  const getRequestStatus = (matchDate) => {
+    try {
+      const now = new Date();
+      const gameDate = new Date(matchDate);
+
+      if (Number.isNaN(gameDate.getTime())) {
+        return "closed";
+      }
+
+      const openDate = new Date(gameDate);
+      openDate.setMonth(openDate.getMonth() - 1);
+
+      const closeDate = new Date(gameDate);
+      closeDate.setDate(closeDate.getDate() - 16);
+
+      if (now >= openDate && now <= closeDate) {
+        return "open";
+      }
+
+      return "closed";
+    } catch {
+      return "closed";
+    }
+  };
+
+  const getRequestStatusLabel = (matchDate) => {
+    const status = getRequestStatus(matchDate);
+
+    if (language === "it") {
+      return status === "open" ? "Richiesta aperta" : "Richiesta chiusa";
+    }
+
+    return status === "open" ? "Anfrage offen" : "Anfrage geschlossen";
+  };
+
   const content_it = {
     nav: {
       home: "Home",
@@ -375,6 +410,12 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
     </div>
   );
 
+  const openNextMatches = useMemo(() => {
+    return liveData.nextMatches.filter(
+      (match) => getRequestStatus(match.date) === "open"
+    );
+  }, [liveData.nextMatches]);
+
   return (
     <div className="relative min-h-screen bg-black text-white">
       <div
@@ -574,8 +615,14 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                         <span className="text-xs uppercase tracking-wide text-zinc-400">
                           {match.competition}
                         </span>
-                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
-                          {match.status}
+                        <span
+                          className={`rounded-full border px-3 py-1 text-xs ${
+                            getRequestStatus(match.date) === "open"
+                              ? "border-green-500/30 bg-green-500/10 text-green-300"
+                              : "border-red-500/30 bg-red-500/10 text-red-300"
+                          }`}
+                        >
+                          {getRequestStatusLabel(match.date)}
                         </span>
                       </div>
                       <p className="text-lg font-bold">
@@ -656,12 +703,21 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.phone}
                 />
-                <input
+                <select
                   value={formData.match}
                   onChange={(e) => handleChange("match", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2"
-                  placeholder={t.labels.match}
-                />
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2"
+                >
+                  <option value="">{t.labels.match}</option>
+                  {openNextMatches.map((match) => (
+                    <option
+                      key={match.id}
+                      value={`${match.homeTeam} vs ${match.awayTeam}`}
+                    >
+                      {match.homeTeam} vs {match.awayTeam}
+                    </option>
+                  ))}
+                </select>
                 <select
                   value={formData.quantity}
                   onChange={(e) => handleChange("quantity", e.target.value)}
@@ -928,9 +984,20 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                       key={match.id}
                       className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4"
                     >
-                      <p className="text-xs uppercase tracking-wide text-zinc-500">
-                        {match.competition}
-                      </p>
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <p className="text-xs uppercase tracking-wide text-zinc-500">
+                          {match.competition}
+                        </p>
+                        <span
+                          className={`rounded-full border px-3 py-1 text-xs ${
+                            getRequestStatus(match.date) === "open"
+                              ? "border-green-500/30 bg-green-500/10 text-green-300"
+                              : "border-red-500/30 bg-red-500/10 text-red-300"
+                          }`}
+                        >
+                          {getRequestStatusLabel(match.date)}
+                        </span>
+                      </div>
                       <p className="mt-2 text-lg font-bold">
                         {match.homeTeam} vs {match.awayTeam}
                       </p>
