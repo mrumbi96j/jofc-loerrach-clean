@@ -110,16 +110,13 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
 
   const formatDate = (dateString) => {
     try {
-      return new Date(dateString).toLocaleString(
-        language === "it" ? "it-IT" : "de-DE",
-        {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }
-      );
+      return new Date(dateString).toLocaleString(language === "it" ? "it-IT" : "de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     } catch {
       return dateString;
     }
@@ -151,13 +148,11 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
     memberAreaTitle: "Per soci e tifosi",
     memberAreaText: "Richieste biglietti e informazioni.",
     sectionMatches: "Partite della Juventus",
-    sectionMatchesText:
-      "Risultati passati e partite future aggiornati automaticamente.",
+    sectionMatchesText: "Risultati passati e partite future aggiornati automaticamente.",
     trophiesTitle: "Trofei Juventus",
     trophiesText: "La storia gloriosa del club bianconero.",
     contactTitle: "Contatta il club",
-    contactText:
-      "Contattaci direttamente per informazioni e richieste biglietti.",
+    contactText: "Contattaci direttamente per informazioni e richieste biglietti.",
     standingsTitle: "Classifica Serie A",
     standingsText: "Classifica aggiornata automaticamente.",
     pastMatchesTitle: "Ultimi risultati Juventus",
@@ -192,29 +187,17 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
       {
         title: "Soci",
         price: "Priorità",
-        items: [
-          "Priorità richieste",
-          "Informazioni dedicate",
-          "Supporto diretto",
-        ],
+        items: ["Priorità richieste", "Informazioni dedicate", "Supporto diretto"],
       },
       {
         title: "Non soci",
         price: "Disponibilità",
-        items: [
-          "Disponibilità standard",
-          "Ordine cronologico",
-          "Lista attesa",
-        ],
+        items: ["Disponibilità standard", "Ordine cronologico", "Lista attesa"],
       },
       {
         title: "Bus & VIP",
         price: "Su richiesta",
-        items: [
-          "Pacchetti personalizzati",
-          "Viaggio bus",
-          "Esperienze VIP",
-        ],
+        items: ["Pacchetti personalizzati", "Viaggio bus", "Esperienze VIP"],
       },
     ],
     heroMatches: [
@@ -266,8 +249,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
     heroCardTitle: "Nächste Spiele",
     heroCardBadge: "IT / DE",
     ticketTitle: "Ticketanfrage",
-    ticketText:
-      "Fülle das Formular aus, um eine Anfrage an den Club zu senden.",
+    ticketText: "Fülle das Formular aus, um eine Anfrage an den Club zu senden.",
     ticketsCta: "Anfrage senden",
     quickContact: "Schnellkontakt",
     whatsappGermany: "WhatsApp Deutschland",
@@ -276,8 +258,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
     memberAreaTitle: "Für Mitglieder und Fans",
     memberAreaText: "Ticketanfragen und Informationen.",
     sectionMatches: "Juventus Spiele",
-    sectionMatchesText:
-      "Vergangene Ergebnisse und kommende Spiele werden automatisch aktualisiert.",
+    sectionMatchesText: "Vergangene Ergebnisse und kommende Spiele werden automatisch aktualisiert.",
     trophiesTitle: "Juventus Trophäen",
     trophiesText: "Die glorreiche Geschichte des Vereins.",
     contactTitle: "Kontaktiere den Club",
@@ -361,7 +342,11 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
     updatedAtLabel: "Letztes Update",
   };
 
-  const content = { it: content_it, de: content_de };
+  const content = {
+    it: content_it,
+    de: content_de,
+  };
+
   const t = content[language] || content.it;
   const features = useMemo(() => t.cards, [t]);
 
@@ -398,21 +383,11 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
 
           <div className="flex items-center gap-4">
             <nav className="hidden items-center gap-6 text-sm text-zinc-300 md:flex">
-              <a href="#home" className="hover:text-white">
-                {t.nav.home}
-              </a>
-              <a href="#matches" className="hover:text-white">
-                {t.nav.matches}
-              </a>
-              <a href="#tickets" className="hover:text-white">
-                {t.nav.tickets}
-              </a>
-              <a href="#trophies" className="hover:text-white">
-                {t.nav.trophies}
-              </a>
-              <a href="#contact" className="hover:text-white">
-                {t.nav.contact}
-              </a>
+              <a href="#home" className="hover:text-white">{t.nav.home}</a>
+              <a href="#matches" className="hover:text-white">{t.nav.matches}</a>
+              <a href="#tickets" className="hover:text-white">{t.nav.tickets}</a>
+              <a href="#trophies" className="hover:text-white">{t.nav.trophies}</a>
+              <a href="#contact" className="hover:text-white">{t.nav.contact}</a>
             </nav>
 
             <div className="flex items-center rounded-full border border-white/10 bg-white/5 p-1">
@@ -535,9 +510,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                   >
                     <Icon className="mb-3 h-5 w-5 text-white" />
                     <p className="text-sm font-semibold">{item.title}</p>
-                    <p className="mt-2 text-sm leading-6 text-zinc-400">
-                      {item.text}
-                    </p>
+                    <p className="mt-2 text-sm leading-6 text-zinc-400">{item.text}</p>
                   </div>
                 );
               })}
@@ -582,8 +555,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                         {match.homeTeam} vs {match.awayTeam}
                       </p>
                       <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
-                        <CalendarDays className="h-4 w-4" />{" "}
-                        {formatDate(match.date)}
+                        <CalendarDays className="h-4 w-4" /> {formatDate(match.date)}
                       </p>
                     </div>
                   ))
@@ -604,8 +576,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                         {match.home} vs {match.away}
                       </p>
                       <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
-                        <CalendarDays className="h-4 w-4" /> {match.date} •{" "}
-                        {match.time}
+                        <CalendarDays className="h-4 w-4" /> {match.date} • {match.time}
                       </p>
                     </div>
                   ))}
@@ -769,9 +740,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
               <div className="mt-5 space-y-4 text-sm text-zinc-300">
                 <div className="flex items-start gap-3">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                  <span className="leading-6">
-                    Lörrach / Germania / Svizzera
-                  </span>
+                  <span className="leading-6">Lörrach / Germania / Svizzera</span>
                 </div>
 
                 <div className="flex items-start gap-3">
@@ -815,9 +784,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
                 <h3 className="text-3xl font-black">{t.sectionMatches}</h3>
-                <p className="mt-3 max-w-3xl text-zinc-300">
-                  {t.sectionMatchesText}
-                </p>
+                <p className="mt-3 max-w-3xl text-zinc-300">{t.sectionMatchesText}</p>
               </div>
 
               {liveData.updatedAt && !loadingLiveData && !liveDataError && (
@@ -858,9 +825,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                       <tr
                         key={`${team.position}-${team.team}`}
                         className={`border-b border-white/5 ${
-                          team.team?.toLowerCase().includes("juventus")
-                            ? "bg-white/10"
-                            : ""
+                          team.team?.toLowerCase().includes("juventus") ? "bg-white/10" : ""
                         }`}
                       >
                         <td className="px-3 py-3">{team.position}</td>
@@ -901,12 +866,9 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                         {match.competition}
                       </p>
                       <p className="mt-2 text-lg font-bold">
-                        {match.homeTeam} {match.homeScore} - {match.awayScore}{" "}
-                        {match.awayTeam}
+                        {match.homeTeam} {match.homeScore} - {match.awayScore} {match.awayTeam}
                       </p>
-                      <p className="mt-1 text-sm text-zinc-400">
-                        {formatDate(match.date)}
-                      </p>
+                      <p className="mt-1 text-sm text-zinc-400">{formatDate(match.date)}</p>
                     </div>
                   ))
                 )}
@@ -934,9 +896,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                       <p className="mt-2 text-lg font-bold">
                         {match.homeTeam} vs {match.awayTeam}
                       </p>
-                      <p className="mt-1 text-sm text-zinc-400">
-                        {formatDate(match.date)}
-                      </p>
+                      <p className="mt-1 text-sm text-zinc-400">{formatDate(match.date)}</p>
                     </div>
                   ))
                 )}
@@ -963,12 +923,8 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
               <p className="max-w-xl text-zinc-300">{t.trophiesText}</p>
 
               <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
-                <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
-                  1897
-                </p>
-                <p className="mt-3 text-2xl font-black">
-                  Juventus • Black & White Legacy
-                </p>
+                <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">1897</p>
+                <p className="mt-3 text-2xl font-black">Juventus • Black & White Legacy</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
                   {language === "it"
                     ? "Sezione pensata per valorizzare la storia del club con un look moderno ispirato ai colori bianconeri."
@@ -984,9 +940,7 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
                   className="min-h-[140px] rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur"
                 >
                   <p className="text-4xl font-black">{item.value}</p>
-                  <p className="mt-3 text-sm leading-6 text-zinc-300">
-                    {item.label}
-                  </p>
+                  <p className="mt-3 text-sm leading-6 text-zinc-300">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -994,96 +948,4 @@ ${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
         </section>
 
         <section id="contact" className="mx-auto max-w-7xl px-6 py-12">
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur md:p-8">
-            <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
-              <div>
-                <h3 className="text-3xl font-black">{t.contactTitle}</h3>
-                <p className="mt-3 max-w-2xl text-zinc-300">{t.contactText}</p>
-              </div>
-
-              <div className="rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
-                <p className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-zinc-200">
-                  <Globe className="h-4 w-4" /> {t.quickContact}
-                </p>
-
-                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-500">
-                  {t.contactBoxTitle}
-                </p>
-
-                <div className="space-y-4 text-sm text-zinc-300">
-                  <a
-                    href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach"
-                    className="flex items-center gap-3 transition hover:text-white"
-                  >
-                    <Mail className="h-4 w-4 shrink-0" />
-                    <span className="break-all">jcdgagnelli@gmx.de</span>
-                  </a>
-
-                  <a
-                    href="https://wa.me/491724385672"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 transition hover:text-white"
-                  >
-                    <MessageCircle className="h-4 w-4 shrink-0" />
-                    <span>{t.whatsappGermany}</span>
-                  </a>
-
-                  <a
-                    href="https://wa.me/41782483401"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 transition hover:text-white"
-                  >
-                    <MessageCircle className="h-4 w-4 shrink-0" />
-                    <span>{t.whatsappSwitzerland}</span>
-                  </a>
-                </div>
-
-                <div className="mt-6 flex flex-col gap-3">
-                  <a
-                    href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
-                  >
-                    {t.emailDirect}
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-
-                  <a
-                    href="https://wa.me/491724385672"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-                  >
-                    {t.whatsappGermany}
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-
-                  <a
-                    href="https://wa.me/41782483401"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-                  >
-                    {t.whatsappSwitzerland}
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                </div>
-
-                <p className="mt-4 text-sm leading-6 text-zinc-500">
-                  {language === "it"
-                    ? "Modulo contatti, WhatsApp diretto, area soci e workflow biglietti collegati nella versione finale."
-                    : "Kontaktformular, direktes WhatsApp, Mitgliederbereich und Ticket-Workflow in der finalen Version verbunden."}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer className="relative z-10 border-t border-white/10 px-6 py-6 text-center text-sm text-zinc-500">
-        {t.footer}
-      </footer>
-    </div>
-  );
-}
+          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6
