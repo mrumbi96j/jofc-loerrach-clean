@@ -17,7 +17,6 @@ import {
   Ticket,
   Phone,
 } from "lucide-react";
-import emailjs from "@emailjs/browser";
 
 export default function JOFCLoerrachWebsite() {
   const [formData, setFormData] = useState({
@@ -47,46 +46,6 @@ export default function JOFCLoerrachWebsite() {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    emailjs
-      .send(
-        "service_fb1gqc1",
-        "template_73zulhg",
-        formData,
-        "2RslMdWoD6NI3cTiS"
-      )
-      .then(() => {
-        alert(
-          language === "it"
-            ? "Richiesta inviata con successo!"
-            : "Anfrage erfolgreich gesendet!"
-        );
-
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          match: "",
-          quantity: "",
-          membership: "",
-          sector: "",
-          extras: "",
-          notes: "",
-        });
-      })
-      .catch((error) => {
-        console.error("Errore EmailJS:", error);
-        alert(
-          language === "it"
-            ? "Errore durante l'invio della richiesta."
-            : "Fehler beim Senden der Anfrage."
-        );
-      });
   };
 
   useEffect(() => {
@@ -693,33 +652,51 @@ export default function JOFCLoerrachWebsite() {
 
               <form
                 className="mt-6 grid gap-4 md:grid-cols-2"
-                onSubmit={handleSubmit}
+                action="https://formsubmit.co/jcdgagnelli@gmx.de"
+                method="POST"
               >
                 <input
+                  type="hidden"
+                  name="_subject"
+                  value="Nuova richiesta biglietti - JOFC Lörrach"
+                />
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_template" value="table" />
+
+                <input
+                  type="text"
+                  name="Nome"
                   value={formData.firstName}
                   onChange={(e) => handleChange("firstName", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.firstName}
                 />
                 <input
+                  type="text"
+                  name="Cognome"
                   value={formData.lastName}
                   onChange={(e) => handleChange("lastName", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.lastName}
                 />
                 <input
+                  type="email"
+                  name="Email"
                   value={formData.email}
                   onChange={(e) => handleChange("email", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.email}
                 />
                 <input
+                  type="text"
+                  name="Telefono"
                   value={formData.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.phone}
                 />
                 <select
+                  name="Partita"
                   value={formData.match}
                   onChange={(e) => handleChange("match", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2"
@@ -735,6 +712,7 @@ export default function JOFCLoerrachWebsite() {
                   ))}
                 </select>
                 <select
+                  name="Numero biglietti"
                   value={formData.quantity}
                   onChange={(e) => handleChange("quantity", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
@@ -746,6 +724,7 @@ export default function JOFCLoerrachWebsite() {
                   <option>4</option>
                 </select>
                 <select
+                  name="Categoria"
                   value={formData.membership}
                   onChange={(e) => handleChange("membership", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
@@ -755,6 +734,7 @@ export default function JOFCLoerrachWebsite() {
                   <option>{t.labels.nonMember}</option>
                 </select>
                 <select
+                  name="Settore Allianz Stadium"
                   value={formData.sector}
                   onChange={(e) => handleChange("sector", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2"
@@ -773,6 +753,7 @@ export default function JOFCLoerrachWebsite() {
                   <option>Settore Ospiti</option>
                 </select>
                 <select
+                  name="Opzione"
                   value={formData.extras}
                   onChange={(e) => handleChange("extras", e.target.value)}
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
@@ -783,6 +764,7 @@ export default function JOFCLoerrachWebsite() {
                   <option>{t.labels.vip}</option>
                 </select>
                 <textarea
+                  name="Note"
                   value={formData.notes}
                   onChange={(e) => handleChange("notes", e.target.value)}
                   className="min-h-[130px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2"
