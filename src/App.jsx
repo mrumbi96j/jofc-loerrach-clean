@@ -56,7 +56,7 @@ export default function App() {
 
         teamsTitle: "Emblemi delle squadre",
         teamsText:
-          "Qui trovi gli emblemi delle squadre di Serie A in caricamento automatico.",
+          "Qui trovi gli emblemi delle squadre di Serie A. Puoi usare questa sezione come galleria visiva sul sito.",
 
         ctaTitle: "Vuoi vivere la Juventus con noi?",
         ctaText:
@@ -127,7 +127,7 @@ export default function App() {
 
         teamsTitle: "Team-Embleme",
         teamsText:
-          "Hier findest du die Serie-A-Embleme mit automatischem Laden.",
+          "Hier findest du die Embleme der Serie-A-Teams. Du kannst diesen Bereich als visuelle Galerie auf deiner Website verwenden.",
 
         ctaTitle: "Möchtest du Juventus mit uns erleben?",
         ctaText:
@@ -159,30 +159,27 @@ export default function App() {
     { label: t.juveCard, price: "20€" },
   ];
 
-  const logoBase =
-    "https://raw.githubusercontent.com/luukhopman/football-logos/master/logos/Italy%20-%20Serie%20A";
-
   const teams = [
-    { name: "Atalanta", logo: `${logoBase}/Atalanta%20BC.png` },
-    { name: "Bologna", logo: `${logoBase}/Bologna%20FC%201909.png` },
-    { name: "Cagliari", logo: `${logoBase}/Cagliari%20Calcio.png` },
-    { name: "Como", logo: `${logoBase}/Como%201907.png` },
-    { name: "Cremonese", logo: `${logoBase}/US%20Cremonese.png` },
-    { name: "Fiorentina", logo: `${logoBase}/ACF%20Fiorentina.png` },
-    { name: "Genoa", logo: `${logoBase}/Genoa%20CFC.png` },
-    { name: "Hellas Verona", logo: `${logoBase}/Hellas%20Verona.png` },
-    { name: "Inter", logo: `${logoBase}/Inter%20Milan.png` },
-    { name: "Juventus", logo: `${logoBase}/Juventus%20FC.png` },
-    { name: "Lazio", logo: `${logoBase}/SS%20Lazio.png` },
-    { name: "Lecce", logo: `${logoBase}/US%20Lecce.png` },
-    { name: "Milan", logo: `${logoBase}/AC%20Milan.png` },
-    { name: "Napoli", logo: `${logoBase}/SSC%20Napoli.png` },
-    { name: "Parma", logo: `${logoBase}/Parma%20Calcio%201913.png` },
-    { name: "Pisa", logo: `${logoBase}/Pisa%20Sporting%20Club.png` },
-    { name: "Roma", logo: `${logoBase}/AS%20Roma.png` },
-    { name: "Sassuolo", logo: `${logoBase}/US%20Sassuolo.png` },
-    { name: "Torino", logo: `${logoBase}/Torino%20FC.png` },
-    { name: "Udinese", logo: `${logoBase}/Udinese%20Calcio.png` },
+    { name: "Atalanta", logo: "/teams/atalanta.png" },
+    { name: "Bologna", logo: "/teams/bologna.png" },
+    { name: "Cagliari", logo: "/teams/cagliari.png" },
+    { name: "Como", logo: "/teams/como.png" },
+    { name: "Cremonese", logo: "/teams/cremonese.png" },
+    { name: "Fiorentina", logo: "/teams/fiorentina.png" },
+    { name: "Genoa", logo: "/teams/genoa.png" },
+    { name: "Inter", logo: "/teams/inter.png" },
+    { name: "Juventus", logo: "/teams/juventus.png" },
+    { name: "Lazio", logo: "/teams/lazio.png" },
+    { name: "Lecce", logo: "/teams/lecce.png" },
+    { name: "Milan", logo: "/teams/milan.png" },
+    { name: "Napoli", logo: "/teams/napoli.png" },
+    { name: "Parma", logo: "/teams/parma.png" },
+    { name: "Pisa", logo: "/teams/pisa.png" },
+    { name: "Roma", logo: "/teams/roma.png" },
+    { name: "Sassuolo", logo: "/teams/sassuolo.png" },
+    { name: "Torino", logo: "/teams/torino.png" },
+    { name: "Udinese", logo: "/teams/udinese.png" },
+    { name: "Verona", logo: "/teams/verona.png" },
   ];
 
   const scrollToSection = (id) => {
@@ -451,12 +448,11 @@ export default function App() {
                 key={team.name}
                 className="rounded-3xl border border-white/10 bg-black/70 p-5 text-center transition hover:-translate-y-1 hover:border-yellow-400/40"
               >
-                <div className="flex h-28 items-center justify-center">
+                <div className="flex h-24 items-center justify-center">
                   <img
                     src={team.logo}
                     alt={team.name}
-                    className="max-h-24 w-auto object-contain"
-                    loading="lazy"
+                    className="h-20 w-20 object-contain"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
                       const fallback = e.currentTarget.nextSibling;
@@ -467,7 +463,7 @@ export default function App() {
                     style={{ display: "none" }}
                     className="h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/5 text-xs text-white/60"
                   >
-                    Logo
+                    No logo
                   </div>
                 </div>
                 <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-white">
