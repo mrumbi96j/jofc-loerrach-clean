@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   CalendarDays,
@@ -34,28 +34,92 @@ export default function JOFCLoerrachWebsite() {
 
   const [language, setLanguage] = useState("it");
 
+  const [liveData, setLiveData] = useState({
+    standings: [],
+    pastMatches: [],
+    nextMatches: [],
+    updatedAt: null,
+  });
+
+  const [loadingLiveData, setLoadingLiveData] = useState(true);
+  const [liveDataError, setLiveDataError] = useState(false);
+
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = () => {
+    const isItalian = language === "it";
+
     const subject = encodeURIComponent(
-      "Richiesta biglietti - Juventus Official Fan Club Lörrach G. Agnelli"
+      isItalian
+        ? "Richiesta biglietti - Juventus Official Fan Club Lörrach G. Agnelli"
+        : "Ticketanfrage - Juventus Official Fan Club Lörrach G. Agnelli"
     );
+
     const body = encodeURIComponent(
-      `Nome: ${formData.firstName}
-Cognome: ${formData.lastName}
+      `${isItalian ? "Nome" : "Vorname"}: ${formData.firstName}
+${isItalian ? "Cognome" : "Nachname"}: ${formData.lastName}
 E-mail: ${formData.email}
-Telefono: ${formData.phone}
-Partita: ${formData.match}
-Numero biglietti: ${formData.quantity}
-Categoria: ${formData.membership}
-Settore Allianz Stadium: ${formData.sector}
-Opzione: ${formData.extras}
-Note: ${formData.notes}`
+${isItalian ? "Telefono" : "Telefon"}: ${formData.phone}
+${isItalian ? "Partita" : "Spiel"}: ${formData.match}
+${isItalian ? "Numero biglietti" : "Anzahl Tickets"}: ${formData.quantity}
+${isItalian ? "Categoria" : "Kategorie"}: ${formData.membership}
+${isItalian ? "Settore Allianz Stadium" : "Allianz Stadium Bereich"}: ${formData.sector}
+${isItalian ? "Opzione" : "Option"}: ${formData.extras}
+${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
     );
 
     window.location.href = `mailto:jcdgagnelli@gmx.de?subject=${subject}&body=${body}`;
+  };
+
+  useEffect(() => {
+    let intervalId;
+
+    const fetchLiveData = async () => {
+      try {
+        setLoadingLiveData(true);
+        setLiveDataError(false);
+
+        const response = await fetch("/api/juventus-data");
+        if (!response.ok) {
+          throw new Error("Errore nel recupero dati");
+        }
+
+        const data = await response.json();
+
+        setLiveData({
+          standings: data.standings || [],
+          pastMatches: data.pastMatches || [],
+          nextMatches: data.nextMatches || [],
+          updatedAt: data.updatedAt || null,
+        });
+      } catch (error) {
+        console.error(error);
+        setLiveDataError(true);
+      } finally {
+        setLoadingLiveData(false);
+      }
+    };
+
+    fetchLiveData();
+    intervalId = setInterval(fetchLiveData, 15 * 60 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const formatDate = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleString(language === "it" ? "it-IT" : "de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   const content_it = {
@@ -84,11 +148,19 @@ Note: ${formData.notes}`
     memberAreaTitle: "Per soci e tifosi",
     memberAreaText: "Richieste biglietti e informazioni.",
     sectionMatches: "Partite della Juventus",
-    sectionMatchesText: "Partite demo.",
+    sectionMatchesText: "Risultati passati e partite future aggiornate automaticamente.",
     trophiesTitle: "Trofei Juventus",
-    trophiesText: "Storia del club.",
+    trophiesText: "La storia gloriosa del club bianconero.",
     contactTitle: "Contatta il club",
-    contactText: "Contattaci.",
+    contactText: "Contattaci direttamente per informazioni e richieste biglietti.",
+    standingsTitle: "Classifica Serie A",
+    standingsText: "Classifica aggiornata automaticamente.",
+    pastMatchesTitle: "Ultimi risultati Juventus",
+    pastMatchesText: "Risultati passati aggiornati automaticamente.",
+    nextMatchesTitle: "Prossime partite Juventus",
+    nextMatchesText: "Calendario aggiornato automaticamente.",
+    loadingData: "Caricamento dati...",
+    errorData: "Errore nel caricamento dei dati.",
     labels: {
       firstName: "Nome",
       lastName: "Cognome",
@@ -128,14 +200,14 @@ Note: ${formData.notes}`
         items: ["Pacchetti personalizzati", "Viaggio bus", "Esperienze VIP"],
       },
     ],
-    matches: [
+    heroMatches: [
       {
         competition: "Serie A",
         home: "Juventus",
         away: "Inter",
         date: "05 Apr",
         time: "20:45",
-        status: "Richiesta aperta",
+        status: "Live data",
       },
     ],
     trophies: [
@@ -147,9 +219,17 @@ Note: ${formData.notes}`
     travelTitle: "Trasferte",
     travelText: "Viaggi organizzati.",
     membersTitle: "Area soci",
-    membersText: "Vantaggi.",
+    membersText: "Vantaggi dedicati ai membri del club.",
     contactBoxTitle: "Info",
     footer: "JOFC Lörrach",
+    teamLabel: "Squadra",
+    playedLabel: "PG",
+    wonLabel: "V",
+    drawLabel: "N",
+    lostLabel: "P",
+    gdLabel: "Diff",
+    ptsLabel: "Pt",
+    updatedAtLabel: "Ultimo aggiornamento",
   };
 
   const content_de = {
@@ -163,7 +243,7 @@ Note: ${formData.notes}`
     heroBadge: "Juventus Official Fan Club Lörrach G. Agnelli",
     heroTitle: "Der Treffpunkt unseres Juventus Fanclubs.",
     heroText:
-      "Ticketanfragen, Spiele der Juventus, Reisen, Mitgliedervorteile und nützliche Informationen in einer eleganten, schnellen und zweisprachigen Website.",
+      "Ticketanfragen, Juventus Spiele, Reisen, Mitgliedervorteile und nützliche Informationen auf einer eleganten, schnellen und zweisprachigen Website.",
     heroPrimary: "Tickets anfragen",
     heroSecondary: "Spiele ansehen",
     heroCardTitle: "Nächste Spiele",
@@ -178,11 +258,19 @@ Note: ${formData.notes}`
     memberAreaTitle: "Für Mitglieder und Fans",
     memberAreaText: "Ticketanfragen und Informationen.",
     sectionMatches: "Juventus Spiele",
-    sectionMatchesText: "Demo Spiele.",
+    sectionMatchesText: "Vergangene Ergebnisse und kommende Spiele werden automatisch aktualisiert.",
     trophiesTitle: "Juventus Trophäen",
-    trophiesText: "Geschichte des Clubs.",
+    trophiesText: "Die glorreiche Geschichte des Vereins.",
     contactTitle: "Kontaktiere den Club",
-    contactText: "Kontaktiere uns.",
+    contactText: "Kontaktiere uns direkt für Infos und Ticketanfragen.",
+    standingsTitle: "Serie A Tabelle",
+    standingsText: "Automatisch aktualisierte Tabelle.",
+    pastMatchesTitle: "Letzte Juventus Ergebnisse",
+    pastMatchesText: "Automatisch aktualisierte Ergebnisse.",
+    nextMatchesTitle: "Nächste Juventus Spiele",
+    nextMatchesText: "Automatisch aktualisierter Spielplan.",
+    loadingData: "Daten werden geladen...",
+    errorData: "Fehler beim Laden der Daten.",
     labels: {
       firstName: "Vorname",
       lastName: "Nachname",
@@ -222,14 +310,14 @@ Note: ${formData.notes}`
         items: ["Pakete", "Busfahrt", "VIP"],
       },
     ],
-    matches: [
+    heroMatches: [
       {
         competition: "Serie A",
         home: "Juventus",
         away: "Inter",
         date: "05 Apr",
         time: "20:45",
-        status: "Anfrage offen",
+        status: "Live data",
       },
     ],
     trophies: [
@@ -241,9 +329,17 @@ Note: ${formData.notes}`
     travelTitle: "Reisen",
     travelText: "Organisierte Fahrten.",
     membersTitle: "Mitgliederbereich",
-    membersText: "Vorteile.",
+    membersText: "Vorteile für Clubmitglieder.",
     contactBoxTitle: "Info",
     footer: "JOFC Lörrach",
+    teamLabel: "Team",
+    playedLabel: "SP",
+    wonLabel: "S",
+    drawLabel: "U",
+    lostLabel: "N",
+    gdLabel: "Diff",
+    ptsLabel: "Pkt",
+    updatedAtLabel: "Letztes Update",
   };
 
   const content = {
@@ -437,29 +533,49 @@ Note: ${formData.notes}`
             </div>
 
             <div className="space-y-3">
-              {t.matches.map((match, index) => (
-                <div
-                  key={index}
-                  className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
-                >
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <span className="text-xs uppercase tracking-wide text-zinc-400">
-                      {match.competition}
-                    </span>
-                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
-                      {match.status}
-                    </span>
-                  </div>
-
-                  <p className="text-lg font-bold">
-                    {match.home} vs {match.away}
-                  </p>
-
-                  <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
-                    <CalendarDays className="h-4 w-4" /> {match.date} • {match.time}
-                  </p>
-                </div>
-              ))}
+              {liveData.nextMatches.length > 0
+                ? liveData.nextMatches.slice(0, 3).map((match) => (
+                    <div
+                      key={match.id}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
+                    >
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <span className="text-xs uppercase tracking-wide text-zinc-400">
+                          {match.competition}
+                        </span>
+                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+                          {match.status}
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold">
+                        {match.homeTeam} vs {match.awayTeam}
+                      </p>
+                      <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
+                        <CalendarDays className="h-4 w-4" /> {formatDate(match.date)}
+                      </p>
+                    </div>
+                  ))
+                : t.heroMatches.map((match, index) => (
+                    <div
+                      key={index}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
+                    >
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <span className="text-xs uppercase tracking-wide text-zinc-400">
+                          {match.competition}
+                        </span>
+                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+                          {match.status}
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold">
+                        {match.home} vs {match.away}
+                      </p>
+                      <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
+                        <CalendarDays className="h-4 w-4" /> {match.date} • {match.time}
+                      </p>
+                    </div>
+                  ))}
             </div>
           </motion.div>
         </section>
@@ -473,9 +589,9 @@ Note: ${formData.notes}`
               <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-300">
                 <p className="font-semibold">Allianz Stadium</p>
                 <p className="mt-2 text-zinc-400">
-                  I soci possono indicare il settore desiderato, incluse curve e
-                  tribune con 1° e 2° anello, così il club può gestire le richieste
-                  in modo più preciso.
+                  {language === "it"
+                    ? "I soci possono indicare il settore desiderato, incluse curve e tribune con 1° e 2° anello, così il club può gestire le richieste in modo più preciso."
+                    : "Mitglieder können den gewünschten Bereich angeben, einschließlich Kurven und Tribünen mit 1. und 2. Rang, damit der Club die Anfragen genauer verwalten kann."}
                 </p>
               </div>
 
@@ -507,16 +623,12 @@ Note: ${formData.notes}`
                   className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.phone}
                 />
-                <select
+                <input
                   value={formData.match}
                   onChange={(e) => handleChange("match", e.target.value)}
-                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
-                >
-                  <option value="">{t.labels.match}</option>
-                  <option>Juventus vs Inter</option>
-                  <option>Milan vs Juventus</option>
-                  <option>Juventus vs Roma</option>
-                </select>
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2"
+                  placeholder={t.labels.match}
+                />
                 <select
                   value={formData.quantity}
                   onChange={(e) => handleChange("quantity", e.target.value)}
@@ -665,29 +777,130 @@ Note: ${formData.notes}`
 
         <section id="matches" className="mx-auto max-w-7xl px-6 py-8">
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
-            <h3 className="text-3xl font-black">{t.sectionMatches}</h3>
-            <p className="mt-3 max-w-3xl text-zinc-300">{t.sectionMatchesText}</p>
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h3 className="text-3xl font-black">{t.sectionMatches}</h3>
+                <p className="mt-3 max-w-3xl text-zinc-300">{t.sectionMatchesText}</p>
+              </div>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {t.matches.map((match, index) => (
-                <div
-                  key={index}
-                  className="rounded-[1.5rem] border border-white/10 bg-black/40 p-5"
-                >
-                  <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">
-                    {match.competition}
-                  </p>
-                  <p className="mt-3 text-xl font-bold leading-tight">{match.home}</p>
-                  <p className="text-sm text-zinc-500">vs</p>
-                  <p className="text-xl font-bold leading-tight">{match.away}</p>
-                  <p className="mt-4 text-sm text-zinc-400">
-                    {match.date} • {match.time}
-                  </p>
-                  <p className="mt-2 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
-                    {match.status}
-                  </p>
-                </div>
-              ))}
+              {liveData.updatedAt && !loadingLiveData && !liveDataError && (
+                <p className="text-sm text-zinc-500">
+                  {t.updatedAtLabel}: {formatDate(liveData.updatedAt)}
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6 py-8">
+          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
+            <h3 className="text-3xl font-black">{t.standingsTitle}</h3>
+            <p className="mt-3 text-zinc-300">{t.standingsText}</p>
+
+            {loadingLiveData ? (
+              <p className="mt-6 text-zinc-400">{t.loadingData}</p>
+            ) : liveDataError ? (
+              <p className="mt-6 text-red-400">{t.errorData}</p>
+            ) : (
+              <div className="mt-6 overflow-x-auto">
+                <table className="w-full min-w-[700px] text-left text-sm text-zinc-300">
+                  <thead className="border-b border-white/10 text-zinc-400">
+                    <tr>
+                      <th className="px-3 py-3">#</th>
+                      <th className="px-3 py-3">{t.teamLabel}</th>
+                      <th className="px-3 py-3">{t.playedLabel}</th>
+                      <th className="px-3 py-3">{t.wonLabel}</th>
+                      <th className="px-3 py-3">{t.drawLabel}</th>
+                      <th className="px-3 py-3">{t.lostLabel}</th>
+                      <th className="px-3 py-3">{t.gdLabel}</th>
+                      <th className="px-3 py-3">{t.ptsLabel}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {liveData.standings.map((team) => (
+                      <tr
+                        key={`${team.position}-${team.team}`}
+                        className={`border-b border-white/5 ${
+                          team.team?.toLowerCase().includes("juventus") ? "bg-white/5" : ""
+                        }`}
+                      >
+                        <td className="px-3 py-3">{team.position}</td>
+                        <td className="px-3 py-3 font-semibold">{team.team}</td>
+                        <td className="px-3 py-3">{team.playedGames}</td>
+                        <td className="px-3 py-3">{team.won}</td>
+                        <td className="px-3 py-3">{team.draw}</td>
+                        <td className="px-3 py-3">{team.lost}</td>
+                        <td className="px-3 py-3">{team.goalDifference}</td>
+                        <td className="px-3 py-3 font-bold">{team.points}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6 py-8">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
+              <h3 className="text-3xl font-black">{t.pastMatchesTitle}</h3>
+              <p className="mt-3 text-zinc-300">{t.pastMatchesText}</p>
+
+              <div className="mt-6 space-y-3">
+                {loadingLiveData ? (
+                  <p className="text-zinc-400">{t.loadingData}</p>
+                ) : liveDataError ? (
+                  <p className="text-red-400">{t.errorData}</p>
+                ) : (
+                  liveData.pastMatches.map((match) => (
+                    <div
+                      key={match.id}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4"
+                    >
+                      <p className="text-xs uppercase tracking-wide text-zinc-500">
+                        {match.competition}
+                      </p>
+                      <p className="mt-2 text-lg font-bold">
+                        {match.homeTeam} {match.homeScore} - {match.awayScore} {match.awayTeam}
+                      </p>
+                      <p className="mt-1 text-sm text-zinc-400">
+                        {formatDate(match.date)}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl">
+              <h3 className="text-3xl font-black">{t.nextMatchesTitle}</h3>
+              <p className="mt-3 text-zinc-300">{t.nextMatchesText}</p>
+
+              <div className="mt-6 space-y-3">
+                {loadingLiveData ? (
+                  <p className="text-zinc-400">{t.loadingData}</p>
+                ) : liveDataError ? (
+                  <p className="text-red-400">{t.errorData}</p>
+                ) : (
+                  liveData.nextMatches.map((match) => (
+                    <div
+                      key={match.id}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4"
+                    >
+                      <p className="text-xs uppercase tracking-wide text-zinc-500">
+                        {match.competition}
+                      </p>
+                      <p className="mt-2 text-lg font-bold">
+                        {match.homeTeam} vs {match.awayTeam}
+                      </p>
+                      <p className="mt-1 text-sm text-zinc-400">
+                        {formatDate(match.date)}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </section>
@@ -710,15 +923,14 @@ Note: ${formData.notes}`
               <p className="max-w-xl text-zinc-300">{t.trophiesText}</p>
 
               <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
-                <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
-                  1897
-                </p>
+                <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">1897</p>
                 <p className="mt-3 text-2xl font-black">
                   Juventus • Black & White Legacy
                 </p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Sezione pensata per valorizzare la storia del club con un look moderno
-                  ispirato ai colori bianconeri e a un monogramma a forma di J nello stile Juventus.
+                  {language === "it"
+                    ? "Sezione pensata per valorizzare la storia del club con un look moderno ispirato ai colori bianconeri."
+                    : "Bereich zur Aufwertung der Vereinsgeschichte mit modernem Look in den schwarz-weißen Farben."}
                 </p>
               </div>
             </div>
@@ -815,8 +1027,9 @@ Note: ${formData.notes}`
                 </div>
 
                 <p className="mt-4 text-sm leading-6 text-zinc-500">
-                  Modulo contatti, WhatsApp diretto, area soci e workflow biglietti
-                  possono essere collegati nella versione finale pubblicata.
+                  {language === "it"
+                    ? "Modulo contatti, WhatsApp diretto, area soci e workflow biglietti collegati nella versione finale."
+                    : "Kontaktformular, direktes WhatsApp, Mitgliederbereich und Ticket-Workflow in der finalen Version verbunden."}
                 </p>
               </div>
             </div>
