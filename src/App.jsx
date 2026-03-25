@@ -38,38 +38,39 @@ export default function JOFCLoerrachWebsite() {
 
   // ✅ FUNZIONE EMAILJS (AGGIUNTA)
   const sendEmail = (e) => {
-    e.preventDefault();
-    console.log("sendEmail partito");
-    emailjs
-      .send(
-        "service_fb1gqc1",   // <-- sostituisci
-        "template_73zulhg",  // <-- sostituisci
-        formData,
-        "2RslMdWoD6NI3cTiS"    // <-- sostituisci
-      )
-      .then(() => {
-        .catch((error) => {
-        console.error("Errore EmailJS:", error);
-        alert("Errore durante l'invio della richiesta.");
+  const sendEmail = (e) => {
+  e.preventDefault();
+  console.log("sendEmail partito");
 
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          match: "",
-          quantity: "",
-          membership: "",
-          sector: "",
-          extras: "",
-          notes: "",
-        });
-      })
-      .catch((error) => {
-        console.error("Errore EmailJS:", error);
-        alert("Errore durante l'invio della richiesta.");
+  emailjs
+    .send(
+      "service_fb1gqc1",
+      "template_73zulhg",
+      formData,
+      "2RslMdWoD6NI3cTiS"
+    )
+    .then(() => {
+      console.log("Email inviata");
+      alert("Richiesta inviata con successo!");
+
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        match: "",
+        quantity: "",
+        membership: "",
+        sector: "",
+        extras: "",
+        notes: "",
       });
-  };
+    })
+    .catch((error) => {
+      console.error("Errore EmailJS:", error);
+      alert("Errore durante l'invio della richiesta.");
+    });
+};
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
