@@ -39,7 +39,7 @@ export default function JOFCLoerrachWebsite() {
   // ✅ FUNZIONE EMAILJS (AGGIUNTA)
   const sendEmail = (e) => {
     e.preventDefault();
-
+    console.log("sendEmail partito");
     emailjs
       .send(
         "service_fb1gqc1",   // <-- sostituisci
@@ -48,7 +48,9 @@ export default function JOFCLoerrachWebsite() {
         "2RslMdWoD6NI3cTiS"    // <-- sostituisci
       )
       .then(() => {
-        alert("Richiesta inviata con successo!");
+        .catch((error) => {
+        console.error("Errore EmailJS:", error);
+        alert("Errore durante l'invio della richiesta.");
 
         setFormData({
           firstName: "",
