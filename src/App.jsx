@@ -1,541 +1,1087 @@
-import React, { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  CalendarDays,
+  Trophy,
+  Users,
+  Bus,
+  Mail,
+  Globe,
+  ShieldCheck,
+  ChevronRight,
+  Star,
+  MessageCircle,
+  ExternalLink,
+  MapPin,
+  Crown,
+  Ticket,
+  Phone,
+} from "lucide-react";
 
-export default function App() {
-  const [lang, setLang] = useState("it");
+export default function JOFCLoerrachWebsite() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    match: "",
+    quantity: "",
+    membership: "",
+    sector: "",
+    extras: "",
+    notes: "",
+  });
 
-  const content = useMemo(
-    () => ({
-      it: {
-        navHome: "Home",
-        navAbout: "Chi siamo",
-        navMembership: "Tesseramento",
-        navTrips: "Trasferte",
-        navTeams: "Squadre",
-        navContact: "Contatti",
+  const [language, setLanguage] = useState("it");
 
-        heroBadge: "Juventus Official Fan Club Lörrach",
-        heroTitle: "Passione bianconera, fratellanza senza confini",
-        heroText:
-          "Benvenuti nel sito ufficiale del nostro Club. Un punto di incontro per tutti i tifosi juventini che vogliono vivere la Juventus insieme, tra emozioni, trasferte e amicizia.",
-        heroBtn1: "Diventa socio",
-        heroBtn2: "Scopri le trasferte",
+  const [liveData, setLiveData] = useState({
+    standings: [],
+    pastMatches: [],
+    nextMatches: [],
+    updatedAt: null,
+  });
 
-        aboutTitle: "Chi siamo",
-        aboutText:
-          "Il Juventus Official Fan Club Lörrach nasce per riunire i tifosi juventini e vivere insieme ogni partita con passione, rispetto e spirito di famiglia. Organizziamo trasferte, momenti di incontro e supportiamo i soci nella richiesta di biglietti e Juventus Card.",
+  const [loadingLiveData, setLoadingLiveData] = useState(true);
+  const [liveDataError, setLiveDataError] = useState(false);
 
-        stats1: "Passione",
-        stats1Text: "Per la Juventus, sempre",
-        stats2: "Famiglia",
-        stats2Text: "Uniti oltre i confini",
-        stats3: "Esperienze",
-        stats3Text: "Partite, eventi e trasferte",
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-        membershipTitle: "Tesseramento soci",
-        membershipText:
-          "Entra a far parte del nostro Club e vivi la Juventus più da vicino. I soci hanno priorità su comunicazioni, eventi e richieste relative al Club.",
-        adult: "Adulto",
-        u14: "Under 14",
-        u6: "Under 6",
-        juveCard: "Juventus Card",
-        membershipNote:
-          "Per informazioni su iscrizione, rinnovo e Juventus Card contattaci direttamente.",
+  const handleSubmit = () => {
+    const isItalian = language === "it";
 
-        tripsTitle: "Trasferte e partite",
-        tripsText:
-          "Organizziamo trasferte per vivere insieme l'emozione dello Stadium e di altri eventi. Qui puoi pubblicare partite, disponibilità e informazioni utili per i soci.",
-        tripCard1Title: "Biglietti + Viaggio",
-        tripCard1Text:
-          "Pacchetti con trasporto organizzato e supporto informativo per i partecipanti.",
-        tripCard2Title: "Posti limitati",
-        tripCard2Text:
-          "Le disponibilità possono terminare rapidamente. Consigliamo prenotazione anticipata.",
-        tripCard3Title: "Info per i soci",
-        tripCard3Text:
-          "Comunicazioni dedicate, dettagli organizzativi e aggiornamenti sugli eventi.",
+    const subject = encodeURIComponent(
+      isItalian
+        ? "Richiesta biglietti - Juventus Official Fan Club Lörrach"
+        : "Ticketanfrage - Juventus Official Fan Club Lörrach"
+    );
 
-        teamsTitle: "Emblemi delle squadre",
-        teamsText:
-          "Qui trovi gli emblemi delle squadre di Serie A. Puoi usare questa sezione come galleria visiva sul sito.",
+    const body = encodeURIComponent(
+      `${isItalian ? "Nome" : "Vorname"}: ${formData.firstName}
+${isItalian ? "Cognome" : "Nachname"}: ${formData.lastName}
+E-mail: ${formData.email}
+${isItalian ? "Telefono" : "Telefon"}: ${formData.phone}
+${isItalian ? "Partita" : "Spiel"}: ${formData.match}
+${isItalian ? "Numero biglietti" : "Anzahl Tickets"}: ${formData.quantity}
+${isItalian ? "Categoria" : "Kategorie"}: ${formData.membership}
+${isItalian ? "Settore Allianz Stadium" : "Allianz Stadium Bereich"}: ${formData.sector}
+${isItalian ? "Opzione" : "Option"}: ${formData.extras}
+${isItalian ? "Note" : "Notizen"}: ${formData.notes}`
+    );
 
-        ctaTitle: "Vuoi vivere la Juventus con noi?",
-        ctaText:
-          "Scrivici per informazioni su iscrizioni, eventi, partite e trasferte.",
-        ctaButton: "Contattaci ora",
+    window.location.href = `mailto:jcdgagnelli@gmx.de?subject=${subject}&body=${body}`;
+  };
 
-        contactTitle: "Contatti",
-        contactText:
-          "Per informazioni puoi scriverci tramite email o contattarci sui nostri canali ufficiali.",
-        contactEmailLabel: "Email",
-        contactPhoneLabel: "Telefono",
-        contactLocationLabel: "Sede",
-        contactLocation: "Lörrach / Area di Basilea",
+  useEffect(() => {
+    let intervalId;
 
-        footer:
-          "© 2026 Juventus Official Fan Club Lörrach - Tutti i diritti riservati",
-        langButton: "DE",
-      },
+    const fetchLiveData = async () => {
+      try {
+        setLoadingLiveData(true);
+        setLiveDataError(false);
 
-      de: {
-        navHome: "Start",
-        navAbout: "Über uns",
-        navMembership: "Mitgliedschaft",
-        navTrips: "Auswärtsfahrten",
-        navTeams: "Teams",
-        navContact: "Kontakt",
+        const response = await fetch("/api/juventus-data");
+        if (!response.ok) {
+          throw new Error("Errore nel recupero dati");
+        }
 
-        heroBadge: "Juventus Official Fan Club Lörrach",
-        heroTitle: "Bianconera-Leidenschaft, Brüderlichkeit ohne Grenzen",
-        heroText:
-          "Willkommen auf der offiziellen Website unseres Clubs. Ein Treffpunkt für alle Juventus-Fans, die Juventus gemeinsam erleben möchten – mit Emotionen, Auswärtsfahrten und Freundschaft.",
-        heroBtn1: "Mitglied werden",
-        heroBtn2: "Auswärtsfahrten entdecken",
+        const data = await response.json();
 
-        aboutTitle: "Über uns",
-        aboutText:
-          "Der Juventus Official Fan Club Lörrach wurde gegründet, um Juventus-Fans zu vereinen und jedes Spiel gemeinsam mit Leidenschaft, Respekt und familiärem Geist zu erleben. Wir organisieren Auswärtsfahrten, Treffen und unterstützen unsere Mitglieder bei Ticketanfragen und der Juventus Card.",
+        setLiveData({
+          standings: data.standings || [],
+          pastMatches: data.pastMatches || [],
+          nextMatches: data.nextMatches || [],
+          updatedAt: data.updatedAt || null,
+        });
+      } catch (error) {
+        console.error(error);
+        setLiveDataError(true);
+      } finally {
+        setLoadingLiveData(false);
+      }
+    };
 
-        stats1: "Leidenschaft",
-        stats1Text: "Immer für Juventus",
-        stats2: "Familie",
-        stats2Text: "Vereint über Grenzen hinweg",
-        stats3: "Erlebnisse",
-        stats3Text: "Spiele, Events und Fahrten",
+    fetchLiveData();
+    intervalId = setInterval(fetchLiveData, 15 * 60 * 1000);
 
-        membershipTitle: "Mitgliedschaft",
-        membershipText:
-          "Werde Teil unseres Clubs und erlebe Juventus noch näher. Mitglieder erhalten Vorrang bei Mitteilungen, Events und clubbezogenen Anfragen.",
-        adult: "Erwachsene",
-        u14: "Unter 14",
-        u6: "Unter 6",
-        juveCard: "Juventus Card",
-        membershipNote:
-          "Für Informationen zu Anmeldung, Verlängerung und Juventus Card kontaktiere uns direkt.",
+    return () => clearInterval(intervalId);
+  }, []);
 
-        tripsTitle: "Auswärtsfahrten und Spiele",
-        tripsText:
-          "Wir organisieren Fahrten, um gemeinsam die Emotionen im Stadium und bei anderen Events zu erleben. Hier kannst du Spiele, Verfügbarkeiten und wichtige Infos für Mitglieder veröffentlichen.",
-        tripCard1Title: "Tickets + Fahrt",
-        tripCard1Text:
-          "Pakete mit organisiertem Transport und Informationen für die Teilnehmer.",
-        tripCard2Title: "Begrenzte Plätze",
-        tripCard2Text:
-          "Die Verfügbarkeit kann schnell enden. Eine frühe Reservierung wird empfohlen.",
-        tripCard3Title: "Infos für Mitglieder",
-        tripCard3Text:
-          "Spezielle Mitteilungen, organisatorische Details und Updates zu Events.",
-
-        teamsTitle: "Team-Embleme",
-        teamsText:
-          "Hier findest du die Embleme der Serie-A-Teams. Du kannst diesen Bereich als visuelle Galerie auf deiner Website verwenden.",
-
-        ctaTitle: "Möchtest du Juventus mit uns erleben?",
-        ctaText:
-          "Schreib uns für Informationen zu Mitgliedschaften, Events, Spielen und Auswärtsfahrten.",
-        ctaButton: "Jetzt kontaktieren",
-
-        contactTitle: "Kontakt",
-        contactText:
-          "Für Informationen kannst du uns per E-Mail schreiben oder über unsere offiziellen Kanäle kontaktieren.",
-        contactEmailLabel: "E-Mail",
-        contactPhoneLabel: "Telefon",
-        contactLocationLabel: "Standort",
-        contactLocation: "Lörrach / Raum Basel",
-
-        footer:
-          "© 2026 Juventus Official Fan Club Lörrach - Alle Rechte vorbehalten",
-        langButton: "IT",
-      },
-    }),
-    []
-  );
-
-  const t = content[lang];
-
-  const membershipPrices = [
-    { label: t.adult, price: "50€" },
-    { label: t.u14, price: "40€" },
-    { label: t.u6, price: "10€" },
-    { label: t.juveCard, price: "20€" },
-  ];
-
-  const teams = [
-    { name: "Atalanta", logo: "/teams/atalanta.png" },
-    { name: "Bologna", logo: "/teams/bologna.png" },
-    { name: "Cagliari", logo: "/teams/cagliari.png" },
-    { name: "Como", logo: "/teams/como.png" },
-    { name: "Cremonese", logo: "/teams/cremonese.png" },
-    { name: "Fiorentina", logo: "/teams/fiorentina.png" },
-    { name: "Genoa", logo: "/teams/genoa.png" },
-    { name: "Inter", logo: "/teams/inter.png" },
-    { name: "Juventus", logo: "/teams/juventus.png" },
-    { name: "Lazio", logo: "/teams/lazio.png" },
-    { name: "Lecce", logo: "/teams/lecce.png" },
-    { name: "Milan", logo: "/teams/milan.png" },
-    { name: "Napoli", logo: "/teams/napoli.png" },
-    { name: "Parma", logo: "/teams/parma.png" },
-    { name: "Pisa", logo: "/teams/pisa.png" },
-    { name: "Roma", logo: "/teams/roma.png" },
-    { name: "Sassuolo", logo: "/teams/sassuolo.png" },
-    { name: "Torino", logo: "/teams/torino.png" },
-    { name: "Udinese", logo: "/teams/udinese.png" },
-    { name: "Verona", logo: "/teams/verona.png" },
-  ];
-
-  const scrollToSection = (id) => {
-    const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
+  const formatDate = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleString(
+        language === "it" ? "it-IT" : "de-DE",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      );
+    } catch {
+      return dateString;
     }
   };
 
+  const content_it = {
+    nav: {
+      home: "Home",
+      matches: "Partite",
+      tickets: "Biglietti",
+      trophies: "Trofei",
+      contact: "Contatti",
+    },
+    heroBadge: "Juventus Official Fan Club Lörrach • Fino alla fine",
+    heroTitle: "Il punto di riferimento del nostro Juventus Fan Club.",
+    heroText:
+      "Richieste biglietti, partite della Juventus, trasferte, vantaggi soci e informazioni utili in un sito elegante, veloce e bilingue.",
+    heroPrimary: "Richiedi biglietti",
+    heroSecondary: "Guarda le partite",
+    heroCardTitle: "Prossime partite",
+    heroCardBadge: "Modalità IT / DE",
+    ticketTitle: "Richiesta biglietti",
+    ticketText: "Compila il modulo per inviare una richiesta al club.",
+    ticketsCta: "Invia richiesta",
+    quickContact: "Contatto rapido",
+    whatsappGermany: "WhatsApp Germania",
+    whatsappSwitzerland: "WhatsApp Svizzera",
+    emailDirect: "Scrivi una e-mail",
+    memberAreaTitle: "Per soci e tifosi",
+    memberAreaText: "Richieste biglietti e informazioni.",
+    sectionMatches: "Partite della Juventus",
+    sectionMatchesText:
+      "Risultati passati e partite future aggiornati automaticamente.",
+    trophiesTitle: "Trofei Juventus",
+    trophiesText: "La storia gloriosa del club bianconero.",
+    contactTitle: "Contatta il club",
+    contactText:
+      "Contattaci direttamente per informazioni e richieste biglietti.",
+    standingsTitle: "Classifica Serie A",
+    standingsText: "Classifica aggiornata automaticamente.",
+    pastMatchesTitle: "Ultimi risultati Juventus",
+    pastMatchesText: "Risultati passati aggiornati automaticamente.",
+    nextMatchesTitle: "Prossime partite Juventus",
+    nextMatchesText: "Calendario aggiornato automaticamente.",
+    loadingData: "Caricamento dati...",
+    errorData: "Errore nel caricamento dei dati.",
+    labels: {
+      firstName: "Nome",
+      lastName: "Cognome",
+      email: "E-mail",
+      phone: "Telefono",
+      match: "Partita",
+      quantity: "Numero biglietti",
+      membership: "Categoria",
+      sector: "Settore Allianz Stadium",
+      extras: "Opzione",
+      notes: "Note",
+      member: "Socio",
+      nonMember: "Non socio",
+      onlyTicket: "Solo biglietto",
+      ticketBus: "Biglietto + bus",
+      vip: "VIP",
+    },
+    cards: [
+      { icon: Users, title: "Area soci", text: "Vantaggi soci." },
+      { icon: Bus, title: "Trasferte", text: "Viaggi organizzati." },
+      { icon: ShieldCheck, title: "Richieste", text: "Gestione richieste." },
+    ],
+    packages: [
+      {
+        title: "Soci",
+        price: "Priorità",
+        items: [
+          "Priorità richieste",
+          "Informazioni dedicate",
+          "Supporto diretto",
+        ],
+      },
+      {
+        title: "Non soci",
+        price: "Disponibilità",
+        items: [
+          "Disponibilità standard",
+          "Ordine cronologico",
+          "Lista attesa",
+        ],
+      },
+      {
+        title: "Bus & VIP",
+        price: "Su richiesta",
+        items: [
+          "Pacchetti personalizzati",
+          "Viaggio bus",
+          "Esperienze VIP",
+        ],
+      },
+    ],
+    heroMatches: [
+      {
+        competition: "Serie A",
+        home: "Juventus",
+        away: "Inter",
+        date: "05 Apr",
+        time: "20:45",
+        status: "Live data",
+      },
+    ],
+    trophies: [
+      { label: "Scudetti", value: "38" },
+      { label: "Coppa Italia", value: "15" },
+      { label: "Supercoppa Italiana", value: "9" },
+      { label: "Titoli UEFA", value: "11" },
+    ],
+    travelTitle: "Trasferte",
+    travelText: "Viaggi organizzati.",
+    membersTitle: "Area soci",
+    membersText: "Vantaggi dedicati ai membri del club.",
+    contactBoxTitle: "Info",
+    footer: "JOFC Lörrach",
+    teamLabel: "Squadra",
+    playedLabel: "PG",
+    wonLabel: "V",
+    drawLabel: "N",
+    lostLabel: "P",
+    gdLabel: "Diff",
+    ptsLabel: "Pt",
+    updatedAtLabel: "Ultimo aggiornamento",
+  };
+
+  const content_de = {
+    nav: {
+      home: "Start",
+      matches: "Spiele",
+      tickets: "Tickets",
+      trophies: "Trophäen",
+      contact: "Kontakt",
+    },
+    heroBadge: "Juventus Official Fan Club Lörrach",
+    heroTitle: "Der Treffpunkt unseres Juventus Fanclubs.",
+    heroText:
+      "Ticketanfragen, Juventus Spiele, Reisen, Mitgliedervorteile und nützliche Informationen auf einer eleganten, schnellen und zweisprachigen Website.",
+    heroPrimary: "Tickets anfragen",
+    heroSecondary: "Spiele ansehen",
+    heroCardTitle: "Nächste Spiele",
+    heroCardBadge: "IT / DE",
+    ticketTitle: "Ticketanfrage",
+    ticketText:
+      "Fülle das Formular aus, um eine Anfrage an den Club zu senden.",
+    ticketsCta: "Anfrage senden",
+    quickContact: "Schnellkontakt",
+    whatsappGermany: "WhatsApp Deutschland",
+    whatsappSwitzerland: "WhatsApp Schweiz",
+    emailDirect: "E-Mail schreiben",
+    memberAreaTitle: "Für Mitglieder und Fans",
+    memberAreaText: "Ticketanfragen und Informationen.",
+    sectionMatches: "Juventus Spiele",
+    sectionMatchesText:
+      "Vergangene Ergebnisse und kommende Spiele werden automatisch aktualisiert.",
+    trophiesTitle: "Juventus Trophäen",
+    trophiesText: "Die glorreiche Geschichte des Vereins.",
+    contactTitle: "Kontaktiere den Club",
+    contactText: "Kontaktiere uns direkt für Infos und Ticketanfragen.",
+    standingsTitle: "Serie A Tabelle",
+    standingsText: "Automatisch aktualisierte Tabelle.",
+    pastMatchesTitle: "Letzte Juventus Ergebnisse",
+    pastMatchesText: "Automatisch aktualisierte Ergebnisse.",
+    nextMatchesTitle: "Nächste Juventus Spiele",
+    nextMatchesText: "Automatisch aktualisierter Spielplan.",
+    loadingData: "Daten werden geladen...",
+    errorData: "Fehler beim Laden der Daten.",
+    labels: {
+      firstName: "Vorname",
+      lastName: "Nachname",
+      email: "E-Mail",
+      phone: "Telefon",
+      match: "Spiel",
+      quantity: "Anzahl Tickets",
+      membership: "Kategorie",
+      sector: "Allianz Stadium Bereich",
+      extras: "Option",
+      notes: "Notizen",
+      member: "Mitglied",
+      nonMember: "Nicht-Mitglied",
+      onlyTicket: "Nur Ticket",
+      ticketBus: "Ticket + Bus",
+      vip: "VIP",
+    },
+    cards: [
+      { icon: Users, title: "Mitgliederbereich", text: "Mitgliedervorteile." },
+      { icon: Bus, title: "Reisen", text: "Organisierte Fahrten." },
+      { icon: ShieldCheck, title: "Anfragen", text: "Anfragen verwalten." },
+    ],
+    packages: [
+      {
+        title: "Mitglieder",
+        price: "Priorität",
+        items: ["Priorität", "Direkte Infos", "Support"],
+      },
+      {
+        title: "Nicht-Mitglieder",
+        price: "Verfügbarkeit",
+        items: ["Standard", "Reihenfolge", "Warteliste"],
+      },
+      {
+        title: "Bus & VIP",
+        price: "Auf Anfrage",
+        items: ["Pakete", "Busfahrt", "VIP"],
+      },
+    ],
+    heroMatches: [
+      {
+        competition: "Serie A",
+        home: "Juventus",
+        away: "Inter",
+        date: "05 Apr",
+        time: "20:45",
+        status: "Live data",
+      },
+    ],
+    trophies: [
+      { label: "Meistertitel", value: "38" },
+      { label: "Coppa Italia", value: "15" },
+      { label: "Italienischer Supercup", value: "9" },
+      { label: "UEFA-Titel", value: "11" },
+    ],
+    travelTitle: "Reisen",
+    travelText: "Organisierte Fahrten.",
+    membersTitle: "Mitgliederbereich",
+    membersText: "Vorteile für Clubmitglieder.",
+    contactBoxTitle: "Info",
+    footer: "JOFC Lörrach",
+    teamLabel: "Team",
+    playedLabel: "SP",
+    wonLabel: "S",
+    drawLabel: "U",
+    lostLabel: "N",
+    gdLabel: "Diff",
+    ptsLabel: "Pkt",
+    updatedAtLabel: "Letztes Update",
+  };
+
+  const content = { it: content_it, de: content_de };
+  const t = content[language] || content.it;
+  const features = useMemo(() => t.cards, [t]);
+
+  const JuveMark = () => (
+    <div className="h-16 w-16 overflow-hidden rounded-[1.25rem] border border-white/10 bg-white shadow-2xl">
+      <img
+        src="/logo-club.jpg"
+        alt="JOFC Lörrach"
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-black text-white">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-          <div className="flex items-center gap-3">
-            <img
-              src="/logo.png"
-              alt="JOFC Lörrach Logo"
-              className="h-12 w-12 rounded-full border border-white/20 object-cover"
-            />
+    <div className="relative min-h-screen bg-black text-white">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-black/70" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_30%)]" />
+
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-black/70 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-4">
+            <JuveMark />
             <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-yellow-400">
-                JOFC Lörrach
-              </p>
-              <p className="text-xs text-white/70">
+              <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">
                 Juventus Official Fan Club
               </p>
+              <h1 className="text-2xl font-black tracking-tight">Lörrach</h1>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-6 md:flex">
-            <button
-              onClick={() => scrollToSection("home")}
-              className="text-sm text-white/80 transition hover:text-yellow-400"
-            >
-              {t.navHome}
-            </button>
-            <button
-              onClick={() => scrollToSection("about")}
-              className="text-sm text-white/80 transition hover:text-yellow-400"
-            >
-              {t.navAbout}
-            </button>
-            <button
-              onClick={() => scrollToSection("membership")}
-              className="text-sm text-white/80 transition hover:text-yellow-400"
-            >
-              {t.navMembership}
-            </button>
-            <button
-              onClick={() => scrollToSection("trips")}
-              className="text-sm text-white/80 transition hover:text-yellow-400"
-            >
-              {t.navTrips}
-            </button>
-            <button
-              onClick={() => scrollToSection("teams")}
-              className="text-sm text-white/80 transition hover:text-yellow-400"
-            >
-              {t.navTeams}
-            </button>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className="text-sm text-white/80 transition hover:text-yellow-400"
-            >
-              {t.navContact}
-            </button>
-          </nav>
+          <div className="flex items-center gap-4">
+            <nav className="hidden items-center gap-6 text-sm text-zinc-300 md:flex">
+              <a href="#home" className="hover:text-white">
+                {t.nav.home}
+              </a>
+              <a href="#matches" className="hover:text-white">
+                {t.nav.matches}
+              </a>
+              <a href="#tickets" className="hover:text-white">
+                {t.nav.tickets}
+              </a>
+              <a href="#trophies" className="hover:text-white">
+                {t.nav.trophies}
+              </a>
+              <a href="#contact" className="hover:text-white">
+                {t.nav.contact}
+              </a>
+            </nav>
 
-          <button
-            onClick={() => setLang(lang === "it" ? "de" : "it")}
-            className="rounded-full border border-yellow-400 px-4 py-2 text-sm font-semibold text-yellow-400 transition hover:bg-yellow-400 hover:text-black"
-          >
-            {t.langButton}
-          </button>
+            <div className="flex items-center rounded-full border border-white/10 bg-white/5 p-1">
+              <button
+                onClick={() => setLanguage("it")}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                  language === "it" ? "bg-white text-black" : "text-zinc-300"
+                }`}
+              >
+                IT
+              </button>
+              <button
+                onClick={() => setLanguage("de")}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                  language === "de" ? "bg-white text-black" : "text-zinc-300"
+                }`}
+              >
+                DE
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <section
-        id="home"
-        className="relative overflow-hidden border-b border-white/10"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,215,0,0.14),transparent_40%)]" />
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6 md:py-24">
-          <div>
-            <span className="inline-block rounded-full border border-yellow-400/40 bg-yellow-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-yellow-400">
+      <main className="relative z-10">
+        <section
+          id="home"
+          className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.1fr_0.9fr] md:py-20"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-zinc-300 backdrop-blur">
+              <Star className="h-3.5 w-3.5" />
               {t.heroBadge}
-            </span>
-
-            <h1 className="mt-6 text-4xl font-extrabold leading-tight md:text-6xl">
-              {t.heroTitle}
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 md:text-lg">
-              {t.heroText}
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-4">
-              <button
-                onClick={() => scrollToSection("membership")}
-                className="rounded-2xl bg-yellow-400 px-6 py-3 font-bold text-black transition hover:scale-105"
-              >
-                {t.heroBtn1}
-              </button>
-              <button
-                onClick={() => scrollToSection("trips")}
-                className="rounded-2xl border border-white/20 px-6 py-3 font-bold text-white transition hover:border-yellow-400 hover:text-yellow-400"
-              >
-                {t.heroBtn2}
-              </button>
             </div>
-          </div>
 
-          <div className="relative">
-            <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl">
-              <img
-                src="/hero.jpg"
-                alt="Juventus Stadium"
-                className="h-[420px] w-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-              <div className="flex h-[420px] items-center justify-center bg-gradient-to-br from-neutral-900 to-black px-8 text-center">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.35em] text-yellow-400">
-                    Fino alla fine
-                  </p>
-                  <h2 className="mt-4 text-3xl font-bold md:text-4xl">
-                    Juventus Club Lörrach
-                  </h2>
-                  <p className="mt-4 text-white/70">
-                    Inserisci un&apos;immagine in <strong>public/hero.jpg</strong>
-                  </p>
-                </div>
+            <div className="space-y-4">
+              <h2 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">
+                {t.heroTitle}
+              </h2>
+              <p className="max-w-2xl text-base leading-7 text-zinc-300 md:text-lg">
+                {t.heroText}
+              </p>
+
+              <div className="flex flex-wrap gap-3 text-sm text-zinc-300">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur">
+                  <Ticket className="h-4 w-4" /> Ticket request
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur">
+                  <Bus className="h-4 w-4" /> Trasferte / Reisen
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur">
+                  <Crown className="h-4 w-4" /> Soci & Priorità
+                </span>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section id="about" className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <div className="grid gap-8 md:grid-cols-2 md:items-center">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-yellow-400">
-              JOFC Lörrach
-            </p>
-            <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-              {t.aboutTitle}
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-white/75">
-              {t.aboutText}
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-              <h3 className="text-xl font-bold text-yellow-400">{t.stats1}</h3>
-              <p className="mt-2 text-sm text-white/70">{t.stats1Text}</p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-              <h3 className="text-xl font-bold text-yellow-400">{t.stats2}</h3>
-              <p className="mt-2 text-sm text-white/70">{t.stats2Text}</p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-              <h3 className="text-xl font-bold text-yellow-400">{t.stats3}</h3>
-              <p className="mt-2 text-sm text-white/70">{t.stats3Text}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        id="membership"
-        className="border-y border-white/10 bg-white/[0.03]"
-      >
-        <div className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-          <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-widest text-yellow-400">
-              Membership
-            </p>
-            <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-              {t.membershipTitle}
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-white/75">
-              {t.membershipText}
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {membershipPrices.map((item) => (
-              <div
-                key={item.label}
-                className="rounded-3xl border border-white/10 bg-black p-6 shadow-lg"
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="#tickets"
+                className="rounded-2xl bg-white px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-[1.02]"
               >
-                <p className="text-sm uppercase tracking-widest text-white/60">
-                  {item.label}
-                </p>
-                <p className="mt-4 text-4xl font-extrabold text-yellow-400">
-                  {item.price}
-                </p>
+                {t.heroPrimary}
+              </a>
+              <a
+                href="#matches"
+                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 font-semibold text-white transition hover:bg-white/10"
+              >
+                {t.heroSecondary}
+              </a>
+            </div>
+
+            <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-xl backdrop-blur">
+              <p className="text-sm font-semibold">{t.memberAreaTitle}</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
+                {t.memberAreaText}
+              </p>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <a
+                  href="mailto:jcdgagnelli@gmx.de?subject=Richiesta%20informazioni%20Juventus%20Official%20Fan%20Club%20L%C3%B6rrach"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/60"
+                >
+                  <Mail className="h-4 w-4" />
+                  {t.emailDirect}
+                </a>
+
+                <a
+                  href="https://wa.me/491724385672"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/60"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  {t.whatsappGermany}
+                </a>
+
+                <a
+                  href="https://wa.me/41782483401"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/60"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  {t.whatsappSwitzerland}
+                </a>
               </div>
-            ))}
-          </div>
+            </div>
 
-          <p className="mt-8 text-sm text-white/60">{t.membershipNote}</p>
-        </div>
-      </section>
-
-      <section id="trips" className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-widest text-yellow-400">
-            Transferte / Fahrten
-          </p>
-          <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-            {t.tripsTitle}
-          </h2>
-          <p className="mt-5 text-lg leading-8 text-white/75">
-            {t.tripsText}
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-xl font-bold text-yellow-400">
-              {t.tripCard1Title}
-            </h3>
-            <p className="mt-3 leading-7 text-white/75">{t.tripCard1Text}</p>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-xl font-bold text-yellow-400">
-              {t.tripCard2Title}
-            </h3>
-            <p className="mt-3 leading-7 text-white/75">{t.tripCard2Text}</p>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-xl font-bold text-yellow-400">
-              {t.tripCard3Title}
-            </h3>
-            <p className="mt-3 leading-7 text-white/75">{t.tripCard3Text}</p>
-          </div>
-        </div>
-      </section>
-
-      <section
-        id="teams"
-        className="border-y border-white/10 bg-white/[0.03]"
-      >
-        <div className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-          <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-widest text-yellow-400">
-              Serie A
-            </p>
-            <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-              {t.teamsTitle}
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-white/75">
-              {t.teamsText}
-            </p>
-          </div>
-
-          <div className="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {teams.map((team) => (
-              <div
-                key={team.name}
-                className="rounded-3xl border border-white/10 bg-black/70 p-5 text-center transition hover:-translate-y-1 hover:border-yellow-400/40"
-              >
-                <div className="flex h-24 items-center justify-center">
-                  <img
-                    src={team.logo}
-                    alt={team.name}
-                    className="h-20 w-20 object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                      const fallback = e.currentTarget.nextSibling;
-                      if (fallback) fallback.style.display = "flex";
-                    }}
-                  />
+            <div className="grid gap-4 pt-4 md:grid-cols-3">
+              {features.map((item, index) => {
+                const Icon = item.icon;
+                return (
                   <div
-                    style={{ display: "none" }}
-                    className="h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/5 text-xs text-white/60"
+                    key={index}
+                    className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 shadow-xl backdrop-blur"
                   >
-                    No logo
+                    <Icon className="mb-3 h-5 w-5 text-white" />
+                    <p className="text-sm font-semibold">{item.title}</p>
+                    <p className="mt-2 text-sm leading-6 text-zinc-400">
+                      {item.text}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur"
+          >
+            <div className="mb-5 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.25em] text-zinc-400">
+                  Black & White
+                </p>
+                <h3 className="text-xl font-bold">{t.heroCardTitle}</h3>
+              </div>
+
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs text-zinc-200">
+                <Globe className="h-3.5 w-3.5" />
+                {t.heroCardBadge}
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {liveData.nextMatches.length > 0
+                ? liveData.nextMatches.slice(0, 3).map((match) => (
+                    <div
+                      key={match.id}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
+                    >
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <span className="text-xs uppercase tracking-wide text-zinc-400">
+                          {match.competition}
+                        </span>
+                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+                          {match.status}
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold">
+                        {match.homeTeam} vs {match.awayTeam}
+                      </p>
+                      <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
+                        <CalendarDays className="h-4 w-4" />{" "}
+                        {formatDate(match.date)}
+                      </p>
+                    </div>
+                  ))
+                : t.heroMatches.map((match, index) => (
+                    <div
+                      key={index}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
+                    >
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <span className="text-xs uppercase tracking-wide text-zinc-400">
+                          {match.competition}
+                        </span>
+                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+                          {match.status}
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold">
+                        {match.home} vs {match.away}
+                      </p>
+                      <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
+                        <CalendarDays className="h-4 w-4" /> {match.date} •{" "}
+                        {match.time}
+                      </p>
+                    </div>
+                  ))}
+            </div>
+          </motion.div>
+        </section>
+
+        <section id="tickets" className="mx-auto max-w-7xl px-6 py-8">
+          <div className="grid gap-8 md:grid-cols-[1.05fr_0.95fr]">
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+              <h3 className="text-3xl font-black">{t.ticketTitle}</h3>
+              <p className="mt-3 max-w-2xl text-zinc-300">{t.ticketText}</p>
+
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-300">
+                <p className="font-semibold">Allianz Stadium</p>
+                <p className="mt-2 text-zinc-400">
+                  {language === "it"
+                    ? "I soci possono indicare il settore desiderato, incluse curve e tribune con 1° e 2° anello, così il club può gestire le richieste in modo più preciso."
+                    : "Mitglieder können den gewünschten Bereich angeben, einschließlich Kurven und Tribünen mit 1. und 2. Rang, damit der Club die Anfragen genauer verwalten kann."}
+                </p>
+              </div>
+
+              <form
+                className="mt-6 grid gap-4 md:grid-cols-2"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <input
+                  value={formData.firstName}
+                  onChange={(e) => handleChange("firstName", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
+                  placeholder={t.labels.firstName}
+                />
+                <input
+                  value={formData.lastName}
+                  onChange={(e) => handleChange("lastName", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
+                  placeholder={t.labels.lastName}
+                />
+                <input
+                  value={formData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
+                  placeholder={t.labels.email}
+                />
+                <input
+                  value={formData.phone}
+                  onChange={(e) => handleChange("phone", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
+                  placeholder={t.labels.phone}
+                />
+                <input
+                  value={formData.match}
+                  onChange={(e) => handleChange("match", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2"
+                  placeholder={t.labels.match}
+                />
+                <select
+                  value={formData.quantity}
+                  onChange={(e) => handleChange("quantity", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
+                >
+                  <option value="">{t.labels.quantity}</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                </select>
+                <select
+                  value={formData.membership}
+                  onChange={(e) => handleChange("membership", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
+                >
+                  <option value="">{t.labels.membership}</option>
+                  <option>{t.labels.member}</option>
+                  <option>{t.labels.nonMember}</option>
+                </select>
+                <select
+                  value={formData.sector}
+                  onChange={(e) => handleChange("sector", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2"
+                >
+                  <option value="">{t.labels.sector}</option>
+                  <option>Curva Sud 1° Anello</option>
+                  <option>Curva Sud 2° Anello</option>
+                  <option>Curva Nord 1° Anello</option>
+                  <option>Curva Nord 2° Anello</option>
+                  <option>Tribuna Est 1° Anello</option>
+                  <option>Tribuna Est 2° Anello</option>
+                  <option>Tribuna Ovest 1° Anello</option>
+                  <option>Tribuna Ovest 2° Anello</option>
+                  <option>Tribuna Family 1° Anello</option>
+                  <option>Tribuna Family 2° Anello</option>
+                  <option>Settore Ospiti</option>
+                </select>
+                <select
+                  value={formData.extras}
+                  onChange={(e) => handleChange("extras", e.target.value)}
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
+                >
+                  <option value="">{t.labels.extras}</option>
+                  <option>{t.labels.onlyTicket}</option>
+                  <option>{t.labels.ticketBus}</option>
+                  <option>{t.labels.vip}</option>
+                </select>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => handleChange("notes", e.target.value)}
+                  className="min-h-[130px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2"
+                  placeholder={t.labels.notes}
+                />
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-[1.01] md:col-span-2"
+                >
+                  {t.ticketsCta}
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </form>
+            </div>
+
+            <div className="space-y-4">
+              {t.packages.map((item, index) => (
+                <div
+                  key={index}
+                  className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-xl font-bold">{item.title}</h4>
+                      <p className="mt-1 text-sm text-zinc-400">
+                        Juventus Official Fan Club Lörrach
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold">
+                      {item.price}
+                    </span>
+                  </div>
+
+                  <ul className="mt-4 space-y-2 text-sm text-zinc-300">
+                    {item.items.map((point, idx) => (
+                      <li key={idx}>• {point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6 py-8">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+              <div className="mb-4 inline-flex rounded-2xl bg-white p-3 text-black">
+                <Bus className="h-6 w-6" />
+              </div>
+
+              <h3 className="text-3xl font-black">{t.travelTitle}</h3>
+              <p className="mt-3 text-zinc-300">{t.travelText}</p>
+
+              <div className="mt-5 space-y-4 text-sm text-zinc-300">
+                <div className="flex items-start gap-3">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span className="leading-6">
+                    Lörrach / Germania / Svizzera
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div className="flex flex-col leading-6">
+                    <span>WhatsApp DE: +49 172 438 5672</span>
+                    <span>WhatsApp CH: +41 78 248 3401</span>
                   </div>
                 </div>
-                <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-white">
-                  {team.name}
-                </p>
               </div>
-            ))}
+            </div>
+
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+              <div className="mb-4 inline-flex rounded-2xl bg-white p-3 text-black">
+                <Users className="h-6 w-6" />
+              </div>
+
+              <h3 className="text-3xl font-black">{t.membersTitle}</h3>
+              <p className="mt-3 text-zinc-300">{t.membersText}</p>
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
+                  Priorità richieste biglietti / Ticket-Priorität
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
+                  Comunicazioni dedicate / Direkte Infos
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
+                  Supporto trasferte / Reise-Support
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
+                  Contatto diretto col club / Direkter Kontakt
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="border-y border-white/10 bg-yellow-400 text-black">
-        <div className="mx-auto max-w-7xl px-4 py-16 text-center md:px-6">
-          <h2 className="text-3xl font-extrabold md:text-4xl">{t.ctaTitle}</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-black/80 md:text-lg">
-            {t.ctaText}
-          </p>
-          <a
-            href="mailto:info@jofc-loerrach.com"
-            className="mt-8 inline-block rounded-2xl bg-black px-8 py-4 font-bold text-white transition hover:scale-105"
-          >
-            {t.ctaButton}
-          </a>
-        </div>
-      </section>
+        <section id="matches" className="mx-auto max-w-7xl px-6 py-8">
+          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h3 className="text-3xl font-black">{t.sectionMatches}</h3>
+                <p className="mt-3 max-w-3xl text-zinc-300">
+                  {t.sectionMatchesText}
+                </p>
+              </div>
 
-      <section id="contact" className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <div className="grid gap-8 md:grid-cols-2">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-yellow-400">
-              Contact
-            </p>
-            <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-              {t.contactTitle}
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-white/75">
-              {t.contactText}
-            </p>
+              {liveData.updatedAt && !loadingLiveData && !liveDataError && (
+                <p className="text-sm text-zinc-500">
+                  {t.updatedAtLabel}: {formatDate(liveData.updatedAt)}
+                </p>
+              )}
+            </div>
           </div>
+        </section>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <div className="space-y-5">
-              <div>
-                <p className="text-sm uppercase tracking-widest text-white/50">
-                  {t.contactEmailLabel}
-                </p>
-                <p className="mt-1 text-lg font-semibold">
-                  info@jofc-loerrach.com
-                </p>
+        <section className="mx-auto max-w-7xl px-6 py-8">
+          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+            <h3 className="text-3xl font-black">{t.standingsTitle}</h3>
+            <p className="mt-3 text-zinc-300">{t.standingsText}</p>
+
+            {loadingLiveData ? (
+              <p className="mt-6 text-zinc-400">{t.loadingData}</p>
+            ) : liveDataError ? (
+              <p className="mt-6 text-red-400">{t.errorData}</p>
+            ) : (
+              <div className="mt-6 overflow-x-auto">
+                <table className="w-full min-w-[700px] text-left text-sm text-zinc-300">
+                  <thead className="border-b border-white/10 text-zinc-400">
+                    <tr>
+                      <th className="px-3 py-3">#</th>
+                      <th className="px-3 py-3">{t.teamLabel}</th>
+                      <th className="px-3 py-3">{t.playedLabel}</th>
+                      <th className="px-3 py-3">{t.wonLabel}</th>
+                      <th className="px-3 py-3">{t.drawLabel}</th>
+                      <th className="px-3 py-3">{t.lostLabel}</th>
+                      <th className="px-3 py-3">{t.gdLabel}</th>
+                      <th className="px-3 py-3">{t.ptsLabel}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {liveData.standings.map((team) => (
+                      <tr
+                        key={`${team.position}-${team.team}`}
+                        className={`border-b border-white/5 ${
+                          team.team?.toLowerCase().includes("juventus")
+                            ? "bg-white/10"
+                            : ""
+                        }`}
+                      >
+                        <td className="px-3 py-3">{team.position}</td>
+                        <td className="px-3 py-3 font-semibold">{team.team}</td>
+                        <td className="px-3 py-3">{team.playedGames}</td>
+                        <td className="px-3 py-3">{team.won}</td>
+                        <td className="px-3 py-3">{team.draw}</td>
+                        <td className="px-3 py-3">{team.lost}</td>
+                        <td className="px-3 py-3">{team.goalDifference}</td>
+                        <td className="px-3 py-3 font-bold">{team.points}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6 py-8">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+              <h3 className="text-3xl font-black">{t.pastMatchesTitle}</h3>
+              <p className="mt-3 text-zinc-300">{t.pastMatchesText}</p>
+
+              <div className="mt-6 space-y-3">
+                {loadingLiveData ? (
+                  <p className="text-zinc-400">{t.loadingData}</p>
+                ) : liveDataError ? (
+                  <p className="text-red-400">{t.errorData}</p>
+                ) : (
+                  liveData.pastMatches.map((match) => (
+                    <div
+                      key={match.id}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4"
+                    >
+                      <p className="text-xs uppercase tracking-wide text-zinc-500">
+                        {match.competition}
+                      </p>
+                      <p className="mt-2 text-lg font-bold">
+                        {match.homeTeam} {match.homeScore} - {match.awayScore}{" "}
+                        {match.awayTeam}
+                      </p>
+                      <p className="mt-1 text-sm text-zinc-400">
+                        {formatDate(match.date)}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+              <h3 className="text-3xl font-black">{t.nextMatchesTitle}</h3>
+              <p className="mt-3 text-zinc-300">{t.nextMatchesText}</p>
+
+              <div className="mt-6 space-y-3">
+                {loadingLiveData ? (
+                  <p className="text-zinc-400">{t.loadingData}</p>
+                ) : liveDataError ? (
+                  <p className="text-red-400">{t.errorData}</p>
+                ) : (
+                  liveData.nextMatches.map((match) => (
+                    <div
+                      key={match.id}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4"
+                    >
+                      <p className="text-xs uppercase tracking-wide text-zinc-500">
+                        {match.competition}
+                      </p>
+                      <p className="mt-2 text-lg font-bold">
+                        {match.homeTeam} vs {match.awayTeam}
+                      </p>
+                      <p className="mt-1 text-sm text-zinc-400">
+                        {formatDate(match.date)}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="trophies" className="mx-auto max-w-7xl px-6 py-8">
+          <div className="grid gap-8 md:grid-cols-[0.95fr_1.05fr]">
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="rounded-2xl bg-white p-3 text-black">
+                  <Trophy className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">
+                    Juventus
+                  </p>
+                  <h3 className="text-3xl font-black">{t.trophiesTitle}</h3>
+                </div>
               </div>
 
-              <div>
-                <p className="text-sm uppercase tracking-widest text-white/50">
-                  {t.contactPhoneLabel}
+              <p className="max-w-xl text-zinc-300">{t.trophiesText}</p>
+
+              <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
+                <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
+                  1897
                 </p>
-                <p className="mt-1 text-lg font-semibold">+41 00 000 00 00</p>
+                <p className="mt-3 text-2xl font-black">
+                  Juventus • Black & White Legacy
+                </p>
+                <p className="mt-2 text-sm leading-6 text-zinc-400">
+                  {language === "it"
+                    ? "Sezione pensata per valorizzare la storia del club con un look moderno ispirato ai colori bianconeri."
+                    : "Bereich zur Aufwertung der Vereinsgeschichte mit modernem Look in den schwarz-weißen Farben."}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
+              {t.trophies.map((item, index) => (
+                <div
+                  key={index}
+                  className="min-h-[140px] rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur"
+                >
+                  <p className="text-4xl font-black">{item.value}</p>
+                  <p className="mt-3 text-sm leading-6 text-zinc-300">
+                    {item.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" className="mx-auto max-w-7xl px-6 py-12">
+          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur md:p-8">
+            <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
+              <div>
+                <h3 className="text-3xl font-black">{t.contactTitle}</h3>
+                <p className="mt-3 max-w-2xl text-zinc-300">{t.contactText}</p>
               </div>
 
-              <div>
-                <p className="text-sm uppercase tracking-widest text-white/50">
-                  {t.contactLocationLabel}
+              <div className="rounded-[1.5rem] border border-white/10 bg-black/40 p-5">
+                <p className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-zinc-200">
+                  <Globe className="h-4 w-4" /> {t.quickContact}
                 </p>
-                <p className="mt-1 text-lg font-semibold">
-                  {t.contactLocation}
+
+                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-500">
+                  {t.contactBoxTitle}
+                </p>
+
+                <div className="space-y-4 text-sm text-zinc-300">
+                  <a
+                    href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach"
+                    className="flex items-center gap-3 transition hover:text-white"
+                  >
+                    <Mail className="h-4 w-4 shrink-0" />
+                    <span className="break-all">jcdgagnelli@gmx.de</span>
+                  </a>
+
+                  <a
+                    href="https://wa.me/491724385672"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-3 transition hover:text-white"
+                  >
+                    <MessageCircle className="h-4 w-4 shrink-0" />
+                    <span>{t.whatsappGermany}</span>
+                  </a>
+
+                  <a
+                    href="https://wa.me/41782483401"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-3 transition hover:text-white"
+                  >
+                    <MessageCircle className="h-4 w-4 shrink-0" />
+                    <span>{t.whatsappSwitzerland}</span>
+                  </a>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-3">
+                  <a
+                    href="mailto:jcdgagnelli@gmx.de?subject=Juventus%20Official%20Fan%20Club%20L%C3%B6rrach"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
+                  >
+                    {t.emailDirect}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+
+                  <a
+                    href="https://wa.me/491724385672"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    {t.whatsappGermany}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+
+                  <a
+                    href="https://wa.me/41782483401"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    {t.whatsappSwitzerland}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+
+                <p className="mt-4 text-sm leading-6 text-zinc-500">
+                  {language === "it"
+                    ? "Modulo contatti, WhatsApp diretto, area soci e workflow biglietti collegati nella versione finale."
+                    : "Kontaktformular, direktes WhatsApp, Mitgliederbereich und Ticket-Workflow in der finalen Version verbunden."}
                 </p>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      <footer className="border-t border-white/10 bg-black px-4 py-8 text-center text-sm text-white/50 md:px-6">
+      <footer className="relative z-10 border-t border-white/10 px-6 py-6 text-center text-sm text-zinc-500">
         {t.footer}
       </footer>
     </div>
