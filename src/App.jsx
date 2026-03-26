@@ -830,7 +830,7 @@ export default function JOFCLoerrachWebsite() {
                 <div className="flex items-start gap-3">
                   <Phone className="mt-0.5 h-4 w-4 shrink-0" />
                   <div className="flex flex-col leading-6">
-                    <span>WhatsApp DE: +49 172 438 5671</span>
+                    <span>WhatsApp DE: +49 172 438 5672</span>
                     <span>WhatsApp CH: +41 78 248 3401</span>
                   </div>
                 </div>
@@ -1084,7 +1084,7 @@ export default function JOFCLoerrachWebsite() {
                   </a>
 
                   <a
-                    href="https://wa.me/491724385671"
+                    href="https://wa.me/491724385672"
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-3 transition hover:text-white"
@@ -1114,7 +1114,7 @@ export default function JOFCLoerrachWebsite() {
                   </a>
 
                   <a
-                    href="https://wa.me/491724385671"
+                    href="https://wa.me/491724385672"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
