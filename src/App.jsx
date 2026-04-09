@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Analytics } from "@vercel/analytics/react";
 import {
   CalendarDays,
   Trophy,
@@ -116,10 +115,6 @@ export default function JOFCLoerrachWebsite() {
       const closeDate = new Date(gameDate);
       closeDate.setDate(closeDate.getDate() - 16);
 
-      if (now < openDate) {
-        return "not_open_yet";
-      }
-
       if (now >= openDate && now <= closeDate) {
         return "open";
       }
@@ -134,14 +129,10 @@ export default function JOFCLoerrachWebsite() {
     const status = getRequestStatus(matchDate);
 
     if (language === "it") {
-      if (status === "open") return "Richiesta aperta";
-      if (status === "not_open_yet") return "Richiesta non aperta";
-      return "Richiesta chiusa";
+      return status === "open" ? "Richiesta aperta" : "Richiesta chiusa";
     }
 
-    if (status === "open") return "Anfrage offen";
-    if (status === "not_open_yet") return "Anfrage noch nicht offen";
-    return "Anfrage geschlossen";
+    return status === "open" ? "Anfrage offen" : "Anfrage geschlossen";
   };
 
   const content_it = {
@@ -588,9 +579,9 @@ export default function JOFCLoerrachWebsite() {
               </span>
             </div>
 
-            <div className="space-y-3 max-h-[700px] overflow-y-auto pr-1">
+            <div className="space-y-3">
               {liveData.nextMatches.length > 0
-                ? liveData.nextMatches.map((match) => (
+                ? liveData.nextMatches.slice(0, 3).map((match) => (
                     <div
                       key={match.id}
                       className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
@@ -603,8 +594,6 @@ export default function JOFCLoerrachWebsite() {
                           className={`rounded-full border px-3 py-1 text-xs ${
                             getRequestStatus(match.date) === "open"
                               ? "border-green-500/30 bg-green-500/10 text-green-300"
-                              : getRequestStatus(match.date) === "not_open_yet"
-                              ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
                               : "border-red-500/30 bg-red-500/10 text-red-300"
                           }`}
                         >
@@ -615,7 +604,7 @@ export default function JOFCLoerrachWebsite() {
                         {match.homeTeam} vs {match.awayTeam}
                       </p>
                       <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
-                        <CalendarDays className="h-4 w-4" />
+                        <CalendarDays className="h-4 w-4" />{" "}
                         {formatDate(match.date)}
                       </p>
                     </div>
@@ -679,7 +668,7 @@ export default function JOFCLoerrachWebsite() {
                   name="Nome"
                   value={formData.firstName}
                   onChange={(e) => handleChange("firstName", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition placeholder:text-zinc-400 hover:border-white/25 focus:border-white/40 focus:bg-black/70"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.firstName}
                 />
                 <input
@@ -687,7 +676,7 @@ export default function JOFCLoerrachWebsite() {
                   name="Cognome"
                   value={formData.lastName}
                   onChange={(e) => handleChange("lastName", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition placeholder:text-zinc-400 hover:border-white/25 focus:border-white/40 focus:bg-black/70"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.lastName}
                 />
                 <input
@@ -695,7 +684,7 @@ export default function JOFCLoerrachWebsite() {
                   name="Email"
                   value={formData.email}
                   onChange={(e) => handleChange("email", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition placeholder:text-zinc-400 hover:border-white/25 focus:border-white/40 focus:bg-black/70"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.email}
                 />
                 <input
@@ -703,134 +692,84 @@ export default function JOFCLoerrachWebsite() {
                   name="Telefono"
                   value={formData.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition placeholder:text-zinc-400 hover:border-white/25 focus:border-white/40 focus:bg-black/70"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500"
                   placeholder={t.labels.phone}
                 />
-
                 <select
                   name="Partita"
                   value={formData.match}
                   onChange={(e) => handleChange("match", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition hover:border-white/25 focus:border-white/40 focus:bg-black/70 md:col-span-2"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2"
                 >
-                  <option value="" className="bg-zinc-900 text-zinc-300">
-                    {t.labels.match}
-                  </option>
+                  <option value="">{t.labels.match}</option>
                   {openNextMatches.map((match) => (
                     <option
                       key={match.id}
                       value={`${match.homeTeam} vs ${match.awayTeam}`}
-                      className="bg-zinc-900 text-white"
                     >
                       {match.homeTeam} vs {match.awayTeam}
                     </option>
                   ))}
                 </select>
-
                 <select
                   name="Numero biglietti"
                   value={formData.quantity}
                   onChange={(e) => handleChange("quantity", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition hover:border-white/25 focus:border-white/40 focus:bg-black/70"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
                 >
-                  <option value="" className="bg-zinc-900 text-zinc-300">
-                    {t.labels.quantity}
-                  </option>
-                  <option className="bg-zinc-900 text-white">1</option>
-                  <option className="bg-zinc-900 text-white">2</option>
-                  <option className="bg-zinc-900 text-white">3</option>
-                  <option className="bg-zinc-900 text-white">4</option>
+                  <option value="">{t.labels.quantity}</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
                 </select>
-
                 <select
                   name="Categoria"
                   value={formData.membership}
                   onChange={(e) => handleChange("membership", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition hover:border-white/25 focus:border-white/40 focus:bg-black/70"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
                 >
-                  <option value="" className="bg-zinc-900 text-zinc-300">
-                    {t.labels.membership}
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    {t.labels.member}
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    {t.labels.nonMember}
-                  </option>
+                  <option value="">{t.labels.membership}</option>
+                  <option>{t.labels.member}</option>
+                  <option>{t.labels.nonMember}</option>
                 </select>
-
                 <select
                   name="Settore Allianz Stadium"
                   value={formData.sector}
                   onChange={(e) => handleChange("sector", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition hover:border-white/25 focus:border-white/40 focus:bg-black/70 md:col-span-2"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none md:col-span-2"
                 >
-                  <option value="" className="bg-zinc-900 text-zinc-300">
-                    {t.labels.sector}
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Curva Sud 1° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Curva Sud 2° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Curva Nord 1° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Curva Nord 2° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Tribuna Est 1° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Tribuna Est 2° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Tribuna Ovest 1° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Tribuna Ovest 2° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Tribuna Family 1° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Tribuna Family 2° Anello
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    Settore Ospiti
-                  </option>
+                  <option value="">{t.labels.sector}</option>
+                  <option>Curva Sud 1° Anello</option>
+                  <option>Curva Sud 2° Anello</option>
+                  <option>Curva Nord 1° Anello</option>
+                  <option>Curva Nord 2° Anello</option>
+                  <option>Tribuna Est 1° Anello</option>
+                  <option>Tribuna Est 2° Anello</option>
+                  <option>Tribuna Ovest 1° Anello</option>
+                  <option>Tribuna Ovest 2° Anello</option>
+                  <option>Tribuna Family 1° Anello</option>
+                  <option>Tribuna Family 2° Anello</option>
+                  <option>Settore Ospiti</option>
                 </select>
-
                 <select
                   name="Opzione"
                   value={formData.extras}
                   onChange={(e) => handleChange("extras", e.target.value)}
-                  className="rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition hover:border-white/25 focus:border-white/40 focus:bg-black/70"
+                  className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-zinc-300 outline-none"
                 >
-                  <option value="" className="bg-zinc-900 text-zinc-300">
-                    {t.labels.extras}
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    {t.labels.onlyTicket}
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    {t.labels.ticketBus}
-                  </option>
-                  <option className="bg-zinc-900 text-white">
-                    {t.labels.vip}
-                  </option>
+                  <option value="">{t.labels.extras}</option>
+                  <option>{t.labels.onlyTicket}</option>
+                  <option>{t.labels.ticketBus}</option>
+                  <option>{t.labels.vip}</option>
                 </select>
-
                 <textarea
                   name="Note"
                   value={formData.notes}
                   onChange={(e) => handleChange("notes", e.target.value)}
-                  className="min-h-[130px] rounded-2xl border border-white/15 bg-black/60 px-4 py-3 text-white outline-none transition placeholder:text-zinc-400 hover:border-white/25 focus:border-white/40 focus:bg-black/70 md:col-span-2"
+                  className="min-h-[130px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 outline-none placeholder:text-zinc-500 md:col-span-2"
                   placeholder={t.labels.notes}
                 />
-
                 <button
                   type="submit"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-[1.01] md:col-span-2"
@@ -1050,8 +989,6 @@ export default function JOFCLoerrachWebsite() {
                           className={`rounded-full border px-3 py-1 text-xs ${
                             getRequestStatus(match.date) === "open"
                               ? "border-green-500/30 bg-green-500/10 text-green-300"
-                              : getRequestStatus(match.date) === "not_open_yet"
-                              ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
                               : "border-red-500/30 bg-red-500/10 text-red-300"
                           }`}
                         >
@@ -1211,8 +1148,6 @@ export default function JOFCLoerrachWebsite() {
       <footer className="relative z-10 border-t border-white/10 px-6 py-6 text-center text-sm text-zinc-500">
         {t.footer}
       </footer>
-
-      <Analytics />
     </div>
   );
 }
