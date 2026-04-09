@@ -115,6 +115,10 @@ export default function JOFCLoerrachWebsite() {
       const closeDate = new Date(gameDate);
       closeDate.setDate(closeDate.getDate() - 16);
 
+      if (now < openDate) {
+        return "not_open_yet";
+      }
+
       if (now >= openDate && now <= closeDate) {
         return "open";
       }
@@ -129,10 +133,14 @@ export default function JOFCLoerrachWebsite() {
     const status = getRequestStatus(matchDate);
 
     if (language === "it") {
-      return status === "open" ? "Richiesta aperta" : "Richiesta chiusa";
+      if (status === "open") return "Richiesta aperta";
+      if (status === "not_open_yet") return "Richiesta non aperta";
+      return "Richiesta chiusa";
     }
 
-    return status === "open" ? "Anfrage offen" : "Anfrage geschlossen";
+    if (status === "open") return "Anfrage offen";
+    if (status === "not_open_yet") return "Anfrage noch nicht offen";
+    return "Anfrage geschlossen";
   };
 
   const content_it = {
@@ -579,9 +587,9 @@ export default function JOFCLoerrachWebsite() {
               </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[700px] overflow-y-auto pr-1">
               {liveData.nextMatches.length > 0
-                ? liveData.nextMatches.slice(0, 3).map((match) => (
+                ? liveData.nextMatches.map((match) => (
                     <div
                       key={match.id}
                       className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
@@ -594,6 +602,8 @@ export default function JOFCLoerrachWebsite() {
                           className={`rounded-full border px-3 py-1 text-xs ${
                             getRequestStatus(match.date) === "open"
                               ? "border-green-500/30 bg-green-500/10 text-green-300"
+                              : getRequestStatus(match.date) === "not_open_yet"
+                              ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
                               : "border-red-500/30 bg-red-500/10 text-red-300"
                           }`}
                         >
@@ -604,7 +614,7 @@ export default function JOFCLoerrachWebsite() {
                         {match.homeTeam} vs {match.awayTeam}
                       </p>
                       <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
-                        <CalendarDays className="h-4 w-4" />{" "}
+                        <CalendarDays className="h-4 w-4" />
                         {formatDate(match.date)}
                       </p>
                     </div>
@@ -989,6 +999,8 @@ export default function JOFCLoerrachWebsite() {
                           className={`rounded-full border px-3 py-1 text-xs ${
                             getRequestStatus(match.date) === "open"
                               ? "border-green-500/30 bg-green-500/10 text-green-300"
+                              : getRequestStatus(match.date) === "not_open_yet"
+                              ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
                               : "border-red-500/30 bg-red-500/10 text-red-300"
                           }`}
                         >
