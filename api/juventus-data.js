@@ -3,9 +3,14 @@ export default async function handler(req, res) {
     const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
     const TEAM_ID = process.env.FOOTBALL_DATA_TEAM_ID || "109";
 
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+
     if (!API_KEY) {
       return res.status(500).json({
-        error: "FOOTBALL_DATA_API_KEY mancante",
+        error: "FOOTBALL_DATA_API_KEY fehlt",
       });
     }
 
@@ -13,25 +18,43 @@ export default async function handler(req, res) {
       "X-Auth-Token": API_KEY,
     };
 
-    const urls = {
-      standings:
-        "https://api.football-data.org/v4/competitions/SA/standings",
-      finished: `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=FINISHED&limit=20`,
-      scheduled: `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=SCHEDULED&limit=30`,
-      timed: `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=TIMED&limit=30`,
-    };
+    const standingsUrl =
+      "https://api.football-data.org/v4/competitions/SA/standings";
+
+    const finishedUrl = `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=FINISHED&limit=20`;
+
+    const scheduledUrl = `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=SCHEDULED&limit=30`;
+
+    const timedUrl = `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=TIMED&limit=30`;
 
     const [standingsRes, finishedRes, scheduledRes, timedRes] =
       await Promise.all([
-        fetch(urls.standings, { headers }),
-        fetch(urls.finished, { headers }),
-        fetch(urls.scheduled, { headers }),
-        fetch(urls.timed, { headers }),
+        fetch(standingsUrl, {
+          headers,
+          cache: "no-store",
+        }),
+        fetch(finishedUrl, {
+          headers,
+          cache: "no-store",
+        }),
+        fetch(scheduledUrl, {
+          headers,
+          cache: "no-store",
+        }),
+        fetch(timedUrl, {
+          headers,
+          cache: "no-store",
+        }),
       ]);
 
-    if (!standingsRes.ok || !finishedRes.ok) {
+    if (
+      !standingsRes.ok ||
+      !finishedRes.ok ||
+      !scheduledRes.ok ||
+      !timedRes.ok
+    ) {
       return res.status(500).json({
-        error: "Errore nel recupero dati calcio",
+        error: "Fehler beim Abrufen der Fußball-Daten",
         details: {
           standings: standingsRes.status,
           finished: finishedRes.status,
@@ -43,17 +66,8 @@ export default async function handler(req, res) {
 
     const standingsData = await standingsRes.json();
     const finishedData = await finishedRes.json();
-
-    let scheduledData = { matches: [] };
-    let timedData = { matches: [] };
-
-    if (scheduledRes.ok) {
-      scheduledData = await scheduledRes.json();
-    }
-
-    if (timedRes.ok) {
-      timedData = await timedRes.json();
-    }
+    const scheduledData = await scheduledRes.json();
+    const timedData = await timedRes.json();
 
     const table =
       standingsData?.standings?.find((s) => s.type === "TOTAL")?.table || [];
@@ -72,7 +86,7 @@ export default async function handler(req, res) {
 
     const normalizeMatch = (match) => ({
       id: match.id,
-      competition: match.competition?.name || "Amichevole",
+      competition: match.competition?.name || "",
       date: match.utcDate,
       homeTeam: match.homeTeam?.shortName || match.homeTeam?.name || "",
       awayTeam: match.awayTeam?.shortName || match.awayTeam?.name || "",
@@ -81,21 +95,18 @@ export default async function handler(req, res) {
       status: match.status || "",
     });
 
-    const pastMatches = (finishedData?.matches || [])
+    const pastMatches = (finishedData.matches || [])
       .map(normalizeMatch)
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 10);
 
     const nextMatches = [
-      ...(scheduledData?.matches || []),
-      ...(timedData?.matches || []),
+      ...(scheduledData.matches || []),
+      ...(timedData.matches || []),
     ]
       .map(normalizeMatch)
       .filter((match) => new Date(match.date) >= new Date())
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .slice(0, 20);
-
-    res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=3600");
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
 
     return res.status(200).json({
       standings,
@@ -104,8 +115,10 @@ export default async function handler(req, res) {
       updatedAt: new Date().toISOString(),
     });
   } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
-      error: "Errore interno server",
+      error: "Interner Serverfehler",
       message: error.message,
     });
   }
