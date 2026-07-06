@@ -13,30 +13,47 @@ export default async function handler(req, res) {
       "X-Auth-Token": API_KEY,
     };
 
-    const standingsUrl = "https://api.football-data.org/v4/competitions/SA/standings";
-    const finishedMatchesUrl = `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=FINISHED&limit=10`;
-    const upcomingMatchesUrl = `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=SCHEDULED&limit=10`;
+    const urls = {
+      standings:
+        "https://api.football-data.org/v4/competitions/SA/standings",
+      finished: `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=FINISHED&limit=20`,
+      scheduled: `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=SCHEDULED&limit=30`,
+      timed: `https://api.football-data.org/v4/teams/${TEAM_ID}/matches?status=TIMED&limit=30`,
+    };
 
-    const [standingsRes, finishedRes, upcomingRes] = await Promise.all([
-      fetch(standingsUrl, { headers }),
-      fetch(finishedMatchesUrl, { headers }),
-      fetch(upcomingMatchesUrl, { headers }),
-    ]);
+    const [standingsRes, finishedRes, scheduledRes, timedRes] =
+      await Promise.all([
+        fetch(urls.standings, { headers }),
+        fetch(urls.finished, { headers }),
+        fetch(urls.scheduled, { headers }),
+        fetch(urls.timed, { headers }),
+      ]);
 
-    if (!standingsRes.ok || !finishedRes.ok || !upcomingRes.ok) {
+    if (!standingsRes.ok || !finishedRes.ok) {
       return res.status(500).json({
         error: "Errore nel recupero dati calcio",
         details: {
           standings: standingsRes.status,
           finished: finishedRes.status,
-          upcoming: upcomingRes.status,
+          scheduled: scheduledRes.status,
+          timed: timedRes.status,
         },
       });
     }
 
     const standingsData = await standingsRes.json();
     const finishedData = await finishedRes.json();
-    const upcomingData = await upcomingRes.json();
+
+    let scheduledData = { matches: [] };
+    let timedData = { matches: [] };
+
+    if (scheduledRes.ok) {
+      scheduledData = await scheduledRes.json();
+    }
+
+    if (timedRes.ok) {
+      timedData = await timedRes.json();
+    }
 
     const table =
       standingsData?.standings?.find((s) => s.type === "TOTAL")?.table || [];
@@ -53,28 +70,30 @@ export default async function handler(req, res) {
       goalDifference: row.goalDifference,
     }));
 
-    const pastMatches = (finishedData?.matches || [])
-      .slice(-10)
-      .reverse()
-      .map((match) => ({
-        id: match.id,
-        competition: match.competition?.name || "",
-        date: match.utcDate,
-        homeTeam: match.homeTeam?.shortName || match.homeTeam?.name || "",
-        awayTeam: match.awayTeam?.shortName || match.awayTeam?.name || "",
-        homeScore: match.score?.fullTime?.home ?? "-",
-        awayScore: match.score?.fullTime?.away ?? "-",
-        status: match.status || "",
-      }));
-
-    const nextMatches = (upcomingData?.matches || []).map((match) => ({
+    const normalizeMatch = (match) => ({
       id: match.id,
-      competition: match.competition?.name || "",
+      competition: match.competition?.name || "Amichevole",
       date: match.utcDate,
       homeTeam: match.homeTeam?.shortName || match.homeTeam?.name || "",
       awayTeam: match.awayTeam?.shortName || match.awayTeam?.name || "",
+      homeScore: match.score?.fullTime?.home ?? "-",
+      awayScore: match.score?.fullTime?.away ?? "-",
       status: match.status || "",
-    }));
+    });
+
+    const pastMatches = (finishedData?.matches || [])
+      .map(normalizeMatch)
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 10);
+
+    const nextMatches = [
+      ...(scheduledData?.matches || []),
+      ...(timedData?.matches || []),
+    ]
+      .map(normalizeMatch)
+      .filter((match) => new Date(match.date) >= new Date())
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .slice(0, 20);
 
     res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=3600");
 
