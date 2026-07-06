@@ -56,7 +56,9 @@ export default function JOFCLoerrachWebsite() {
         setLoadingLiveData(true);
         setLiveDataError(false);
 
-        const response = await fetch("/api/juventus-data");
+        const response = await fetch(`/api/juventus-data?t=${Date.now()}`, {
+          cache: "no-store",
+        });
         if (!response.ok) {
           throw new Error("Errore nel recupero dati");
         }
