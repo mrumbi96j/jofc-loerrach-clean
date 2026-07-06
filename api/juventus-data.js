@@ -2,10 +2,13 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 
   const API_KEY = process.env.API_FOOTBALL_KEY;
+
   const TEAM_ID = 496; // Juventus
   const SERIE_A_ID = 135;
-  const SEASON = new Date().getFullYear();
   const TIMEZONE = "Europe/Zurich";
+
+  // WICHTIG: Serie A Saison 2025/26 = 2025
+  const SEASON = 2025;
 
   if (!API_KEY) {
     return res.status(500).json({
@@ -22,7 +25,7 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.message || `API Fehler ${response.status}`);
+      throw new Error(`API Fehler ${response.status}`);
     }
 
     return data.response || [];
@@ -41,23 +44,24 @@ export default async function handler(req, res) {
 
   try {
     const today = new Date();
-    const from = today.toISOString().split("T")[0];
+    const fromDate = today.toISOString().split("T")[0];
 
     const toDate = new Date();
-    toDate.setFullYear(today.getFullYear() + 1);
+    toDate.setMonth(toDate.getMonth() + 12);
     const to = toDate.toISOString().split("T")[0];
 
-    const [standingsData, nextAll, pastAll] = await Promise.all([
-      api(
-        `https://v3.football.api-sports.io/standings?league=${SERIE_A_ID}&season=${SEASON}`
-      ),
-      api(
-        `https://v3.football.api-sports.io/fixtures?team=${TEAM_ID}&season=${SEASON}&from=${from}&to=${to}&timezone=${TIMEZONE}`
-      ),
-      api(
-        `https://v3.football.api-sports.io/fixtures?team=${TEAM_ID}&season=${SEASON}&last=10&timezone=${TIMEZONE}`
-      ),
-    ]);
+    const [standingsData, nextMatchesData, pastMatchesData] =
+      await Promise.all([
+        api(
+          `https://v3.football.api-sports.io/standings?league=${SERIE_A_ID}&season=${SEASON}`
+        ),
+        api(
+          `https://v3.football.api-sports.io/fixtures?team=${TEAM_ID}&season=${SEASON}&from=${fromDate}&to=${to}&timezone=${TIMEZONE}`
+        ),
+        api(
+          `https://v3.football.api-sports.io/fixtures?team=${TEAM_ID}&season=${SEASON}&last=10&timezone=${TIMEZONE}`
+        ),
+      ]);
 
     const standingsRaw =
       standingsData?.[0]?.league?.standings?.[0] || [];
@@ -74,12 +78,12 @@ export default async function handler(req, res) {
       goalDifference: row.goalsDiff ?? 0,
     }));
 
-    const nextMatches = nextAll
+    const nextMatches = nextMatchesData
       .map(normalizeMatch)
       .filter((m) => m.date && m.homeTeam && m.awayTeam)
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    const pastMatches = pastAll
+    const pastMatches = pastMatchesData
       .map(normalizeMatch)
       .filter((m) => m.date && m.homeTeam && m.awayTeam)
       .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -90,6 +94,7 @@ export default async function handler(req, res) {
       nextMatches,
       updatedAt: new Date().toISOString(),
       source: "api-football",
+      season: SEASON,
     });
   } catch (error) {
     return res.status(500).json({
