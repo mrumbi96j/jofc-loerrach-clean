@@ -106,7 +106,7 @@ export default async function handler(req, res) {
       scheduled: "SCHEDULED",
       in_progress: "IN_PLAY",
       postponed: "POSTPONED",
-      cancelled: "CANCELLED",
+      canceled: "CANCELLED",
       abandoned: "ABANDONED",
     };
 
