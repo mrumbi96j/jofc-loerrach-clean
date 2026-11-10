@@ -216,9 +216,9 @@ export default async function handler(req, res) {
       nextMatches,
       updatedAt: new Date().toISOString(),
       source: "Football-Data.org + API Ninjas",
-      seasonUsedForStandings: currentSeason,
-      timezone: "Europe/Zurich",
-      europaLeagueError,
+seasonUsedForStandings: currentSeason,
+timezone: "Europe/Zurich",
+europaLeagueError: europaError,
     });
   } catch (error) {
     console.error("Juventus API error:", error);
