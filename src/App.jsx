@@ -43,65 +43,93 @@ export default function JOFCLoerrachWebsite() {
 
   const [loadingLiveData, setLoadingLiveData] = useState(true);
   const [liveDataError, setLiveDataError] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   useEffect(() => {
+    let active = true;
     let intervalId;
+    let controller;
 
     const fetchLiveData = async () => {
-      try {
-        setLoadingLiveData(true);
-        setLiveDataError(false);
+      controller?.abort();
+      controller = new AbortController();
 
+      if (active && !liveData.updatedAt) setLoadingLiveData(true);
+      if (active) setLiveDataError(false);
+
+      try {
         const response = await fetch(`/api/juventus-data?t=${Date.now()}`, {
           cache: "no-store",
+          headers: { "Cache-Control": "no-cache" },
+          signal: controller.signal,
         });
+
         if (!response.ok) {
-          throw new Error("Errore nel recupero dati");
+          throw new Error(`Errore API (${response.status})`);
         }
 
         const data = await response.json();
 
-        setLiveData({
-          standings: data.standings || [],
-          pastMatches: data.pastMatches || [],
-          nextMatches: data.nextMatches || [],
-          updatedAt: data.updatedAt || null,
-        });
+        if (
+          !data ||
+          !Array.isArray(data.standings) ||
+          !Array.isArray(data.pastMatches) ||
+          !Array.isArray(data.nextMatches)
+        ) {
+          throw new Error("Formato dati API non valido");
+        }
+
+        if (active) {
+          setLiveData({
+            standings: data.standings,
+            pastMatches: data.pastMatches,
+            nextMatches: data.nextMatches,
+            updatedAt: data.updatedAt || new Date().toISOString(),
+          });
+          setLiveDataError(false);
+        }
       } catch (error) {
-        console.error(error);
-        setLiveDataError(true);
+        if (error.name !== "AbortError") {
+          console.error("Juventus live data:", error);
+          if (active) setLiveDataError(true);
+        }
       } finally {
-        setLoadingLiveData(false);
+        if (active) setLoadingLiveData(false);
       }
     };
 
-    fetchLiveData();
-    intervalId = setInterval(fetchLiveData, 15 * 60 * 1000);
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") fetchLiveData();
+    };
 
-    return () => clearInterval(intervalId);
-  }, []);
+    fetchLiveData();
+    intervalId = setInterval(fetchLiveData, 5 * 60 * 1000);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
+    return () => {
+      active = false;
+      controller?.abort();
+      clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
+  }, [refreshKey]);
 
   const formatDate = (dateString) => {
     try {
-      const date = new Date(dateString);
-
-      if (Number.isNaN(date.getTime())) {
-        return dateString;
-      }
-
-      return new Intl.DateTimeFormat(language === "it" ? "it-IT" : "de-DE", {
-        timeZone: "Europe/Zurich",
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }).format(date);
+      return new Date(dateString).toLocaleString(
+        language === "it" ? "it-IT" : "de-DE",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      );
     } catch {
       return dateString;
     }
@@ -117,7 +145,7 @@ export default function JOFCLoerrachWebsite() {
       }
 
       const openDate = new Date(gameDate);
-      openDate.setMonth(openDate.getMonth() - 1);
+      openDate.setMonth(openDate.getMonth() - 3);
 
       const closeDate = new Date(gameDate);
       closeDate.setDate(closeDate.getDate() - 16);
@@ -595,44 +623,44 @@ export default function JOFCLoerrachWebsite() {
             </div>
 
             <div className="space-y-3 max-h-[700px] overflow-y-auto pr-1">
-              {liveData.nextMatches.length > 0 ? (
-                liveData.nextMatches.map((match) => (
-                  <div
-                    key={match.id}
-                    className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
-                  >
-                    <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className="text-xs uppercase tracking-wide text-zinc-400">
-                        {match.competition}
-                      </span>
-                      <span
-                        className={`rounded-full border px-3 py-1 text-xs ${
-                          getRequestStatus(match.date) === "open"
-                            ? "border-green-500/30 bg-green-500/10 text-green-300"
-                            : getRequestStatus(match.date) === "not_open_yet"
-                            ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
-                            : "border-red-500/30 bg-red-500/10 text-red-300"
-                        }`}
-                      >
-                        {getRequestStatusLabel(match.date)}
-                      </span>
+              {liveData.nextMatches.length > 0
+                ? liveData.nextMatches.map((match) => (
+                    <div
+                      key={match.id}
+                      className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4 transition hover:bg-black/60"
+                    >
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <span className="text-xs uppercase tracking-wide text-zinc-400">
+                          {match.competition}
+                        </span>
+                        <span
+                          className={`rounded-full border px-3 py-1 text-xs ${
+                            getRequestStatus(match.date) === "open"
+                              ? "border-green-500/30 bg-green-500/10 text-green-300"
+                              : getRequestStatus(match.date) === "not_open_yet"
+                              ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
+                              : "border-red-500/30 bg-red-500/10 text-red-300"
+                          }`}
+                        >
+                          {getRequestStatusLabel(match.date)}
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold">
+                        {match.homeTeam} vs {match.awayTeam}
+                      </p>
+                      <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
+                        <CalendarDays className="h-4 w-4" />
+                        {formatDate(match.date)}
+                      </p>
                     </div>
-                    <p className="text-lg font-bold">
-                      {match.homeTeam} vs {match.awayTeam}
+                  ))
+                : (
+                    <p className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-400">
+                      {language === "it"
+                        ? "Nessuna prossima partita disponibile. Riprova tra poco."
+                        : "Keine kommenden Spiele verfügbar. Bitte später erneut versuchen."}
                     </p>
-                    <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
-                      <CalendarDays className="h-4 w-4" />
-                      {formatDate(match.date)}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-[1.5rem] border border-yellow-500/20 bg-yellow-500/10 p-4 text-sm text-yellow-100">
-                  {language === "it"
-                    ? "Calendario non disponibile al momento. Controlla la chiave API o riprova dopo il redeploy."
-                    : "Spielplan momentan nicht verfügbar. Bitte API-Key prüfen oder nach dem Redeploy erneut laden."}
-                </div>
-              )}
+                  )}
             </div>
           </motion.div>
         </section>
@@ -875,11 +903,23 @@ export default function JOFCLoerrachWebsite() {
                 </p>
               </div>
 
-              {liveData.updatedAt && !loadingLiveData && !liveDataError && (
-                <p className="text-sm text-zinc-500">
-                  {t.updatedAtLabel}: {formatDate(liveData.updatedAt)}
-                </p>
-              )}
+              <div className="flex flex-wrap items-center gap-3">
+                {liveData.updatedAt && !liveDataError && (
+                  <p className="text-sm text-zinc-500">
+                    {t.updatedAtLabel}: {formatDate(liveData.updatedAt)}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setRefreshKey((value) => value + 1)}
+                  disabled={loadingLiveData}
+                  className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-50"
+                >
+                  {loadingLiveData
+                    ? (language === "it" ? "Aggiornamento..." : "Aktualisierung...")
+                    : (language === "it" ? "Aggiorna dati" : "Daten aktualisieren")}
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -893,6 +933,12 @@ export default function JOFCLoerrachWebsite() {
               <p className="mt-6 text-zinc-400">{t.loadingData}</p>
             ) : liveDataError ? (
               <p className="mt-6 text-red-400">{t.errorData}</p>
+            ) : liveData.standings.length === 0 ? (
+              <p className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-400">
+                {language === "it"
+                  ? "La classifica non è disponibile al momento. Il servizio dati non ha restituito squadre."
+                  : "Die Tabelle ist derzeit nicht verfügbar. Der Datendienst hat keine Teams geliefert."}
+              </p>
             ) : (
               <div className="mt-6 overflow-x-auto">
                 <table className="w-full min-w-[700px] text-left text-sm text-zinc-300">
@@ -947,7 +993,11 @@ export default function JOFCLoerrachWebsite() {
                 ) : liveDataError ? (
                   <p className="text-red-400">{t.errorData}</p>
                 ) : (
-                  liveData.pastMatches.map((match) => (
+                  liveData.pastMatches.length === 0 ? (
+                    <p className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-400">
+                      {language === "it" ? "Nessun risultato disponibile." : "Keine Ergebnisse verfügbar."}
+                    </p>
+                  ) : liveData.pastMatches.map((match) => (
                     <div
                       key={match.id}
                       className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4"
@@ -978,7 +1028,11 @@ export default function JOFCLoerrachWebsite() {
                 ) : liveDataError ? (
                   <p className="text-red-400">{t.errorData}</p>
                 ) : (
-                  liveData.nextMatches.map((match) => (
+                  liveData.nextMatches.length === 0 ? (
+                    <p className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-zinc-400">
+                      {language === "it" ? "Nessuna prossima partita disponibile." : "Keine kommenden Spiele verfügbar."}
+                    </p>
+                  ) : liveData.nextMatches.map((match) => (
                     <div
                       key={match.id}
                       className="rounded-[1.5rem] border border-white/10 bg-black/40 p-4"
