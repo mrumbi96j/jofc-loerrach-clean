@@ -49,7 +49,7 @@ export default async function handler(req, res) {
 
     const url =
       "https://api.api-ninjas.com/v1/soccermatches" +
-      `?league=uel&team=Juventus&season=${currentSeason}`;
+      `?league=uel&team=soccer-juventus&season=${currentSeason}`;
 
     const response = await fetch(url, {
       headers: { "X-Api-Key": NINJAS_KEY },
