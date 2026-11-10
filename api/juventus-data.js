@@ -1,49 +1,70 @@
 
 export default async function handler(req, res) {
-  // Cache CDN Vercel: 15 minuti, con aggiornamento in background
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=900, stale-while-revalidate=3600"
   );
 
-  const TOKEN =
+  const FOOTBALL_TOKEN =
     process.env.FOOTBALL_DATA_TOKEN ||
     process.env.FOOTBALL_DATA_KEY ||
     process.env.FOOTBALL_DATA_API_KEY;
 
-  const COMPETITION = "SA";
-  const TIMEZONE = "Europe/Zurich";
+  const NINJAS_KEY = process.env.API_NINJAS_KEY;
 
   const currentSeason =
     new Date().getMonth() >= 6
       ? new Date().getFullYear()
       : new Date().getFullYear() - 1;
 
-  if (!TOKEN) {
+  if (!FOOTBALL_TOKEN) {
     return res.status(500).json({
       standings: [],
       pastMatches: [],
       nextMatches: [],
-      error: "Token Football-Data.org mancante in Vercel",
+      error: "Token Football-Data.org mancante",
     });
   }
 
-  const api = async (url) => {
+  const footballApi = async (url) => {
     const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "X-Auth-Token": TOKEN,
-      },
+      headers: { "X-Auth-Token": FOOTBALL_TOKEN },
     });
 
     const data = await response.json();
 
     if (!response.ok) {
       throw new Error(
-        data.message ||
-        data.error ||
-        `Football-Data.org HTTP ${response.status}`
+        data.message || `Football-Data HTTP ${response.status}`
       );
+    }
+
+    return data;
+  };
+
+  const ninjasApi = async () => {
+    if (!NINJAS_KEY) {
+      throw new Error("API_NINJAS_KEY mancante");
+    }
+
+    const url =
+      "https://api.api-ninjas.com/v1/soccermatches" +
+      `?league=uel&team=Juventus&season=${currentSeason}`;
+
+    const response = await fetch(url, {
+      headers: { "X-Api-Key": NINJAS_KEY },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || `API Ninjas HTTP ${response.status}`
+      );
+    }
+
+    if (!Array.isArray(data)) {
+      throw new Error("Risposta API Ninjas non valida");
     }
 
     return data;
@@ -51,7 +72,7 @@ export default async function handler(req, res) {
 
   const normalizeStandings = (data) => {
     const table =
-      data.standings?.find((item) => item.type === "TOTAL")?.table ||
+      data.standings?.find((x) => x.type === "TOTAL")?.table ||
       data.standings?.[0]?.table ||
       [];
 
@@ -68,7 +89,7 @@ export default async function handler(req, res) {
     }));
   };
 
-  const normalizeMatch = (match) => ({
+  const normalizeSerieA = (match) => ({
     id: match.id,
     competition: match.competition?.name || "Serie A",
     date: match.utcDate,
@@ -79,73 +100,125 @@ export default async function handler(req, res) {
     status: match.status || "",
   });
 
-  try {
-    const [standingsData, matchesData] = await Promise.all([
-      api(
-        `https://api.football-data.org/v4/competitions/${COMPETITION}/standings?season=${currentSeason}`
-      ),
+  const normalizeEuropa = (match) => {
+    const statusMap = {
+      final: "FINISHED",
+      scheduled: "SCHEDULED",
+      in_progress: "IN_PLAY",
+      postponed: "POSTPONED",
+      cancelled: "CANCELLED",
+      abandoned: "ABANDONED",
+    };
 
-      api(
-        `https://api.football-data.org/v4/competitions/${COMPETITION}/matches?season=${currentSeason}`
+    return {
+      id: match.game_id,
+      competition: "UEFA Europa League",
+      date: match.start_time || match.date,
+      homeTeam: match.home_team?.name || "",
+      awayTeam: match.away_team?.name || "",
+      homeScore: match.home_score ?? "-",
+      awayScore: match.away_score ?? "-",
+      status:
+        statusMap[String(match.status).toLowerCase()] ||
+        String(match.status || "").toUpperCase(),
+    };
+  };
+
+  const isJuventus = (match) => {
+    const home = match.homeTeam.toLowerCase();
+    const away = match.awayTeam.toLowerCase();
+
+    return (
+      home.includes("juventus") ||
+      away.includes("juventus")
+    );
+  };
+
+  const isValid = (match) =>
+    match.date &&
+    match.homeTeam &&
+    match.awayTeam &&
+    !Number.isNaN(new Date(match.date).getTime());
+
+  try {
+    const [standingsData, serieData] = await Promise.all([
+      footballApi(
+        `https://api.football-data.org/v4/competitions/SA/standings?season=${currentSeason}`
+      ),
+      footballApi(
+        `https://api.football-data.org/v4/competitions/SA/matches?season=${currentSeason}`
       ),
     ]);
 
+    const serieMatches = (serieData.matches || [])
+      .map(normalizeSerieA)
+      .filter(isValid)
+      .filter(isJuventus);
+
+    let europaMatches = [];
+    let europaError = null;
+
+    try {
+      const data = await ninjasApi();
+
+      europaMatches = data
+        .map(normalizeEuropa)
+        .filter(isValid)
+        .filter(isJuventus);
+    } catch (error) {
+      europaError = error.message;
+      console.error("Europa League:", error);
+    }
+
+    const allMatches = [
+      ...serieMatches,
+      ...europaMatches,
+    ];
+
+    const uniqueMatches = Array.from(
+      new Map(
+        allMatches.map((match) => [
+          `${match.competition}-${match.id}`,
+          match,
+        ])
+      ).values()
+    );
+
     const now = new Date();
 
-    const juventusMatches = (matchesData.matches || [])
-      .filter((match) => {
-        const home = match.homeTeam?.name?.toLowerCase() || "";
-        const away = match.awayTeam?.name?.toLowerCase() || "";
-
-        return (
-          home.includes("juventus") ||
-          away.includes("juventus")
-        );
-      })
-      .map(normalizeMatch)
-      .filter((match) => {
-        return (
-          match.date &&
-          match.homeTeam &&
-          match.awayTeam &&
-          !Number.isNaN(new Date(match.date).getTime())
-        );
-      });
-
-    const pastMatches = juventusMatches
-      .filter((match) => {
-        return (
+    const pastMatches = uniqueMatches
+      .filter(
+        (match) =>
           new Date(match.date) < now &&
           match.status === "FINISHED"
-        );
-      })
+      )
       .sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
+        (a, b) =>
+          new Date(b.date) - new Date(a.date)
       )
       .slice(0, 10);
 
-    const nextMatches = juventusMatches
-      .filter((match) => {
-        return (
+    const nextMatches = uniqueMatches
+      .filter(
+        (match) =>
           new Date(match.date) >= now &&
           match.status !== "FINISHED" &&
           match.status !== "CANCELLED"
-        );
-      })
+      )
       .sort(
-        (a, b) => new Date(a.date) - new Date(b.date)
+        (a, b) =>
+          new Date(a.date) - new Date(b.date)
       );
 
-    const standings = normalizeStandings(standingsData);
-
     return res.status(200).json({
-      standings,
+      standings: normalizeStandings(standingsData),
       pastMatches,
       nextMatches,
       updatedAt: new Date().toISOString(),
-      source: "football-data.org",
+      source: "Football-Data.org + API Ninjas",
       seasonUsedForStandings: currentSeason,
-      timezone: TIMEZONE,
+      timezone: "Europe/Zurich",
+      europaLeagueError,
     });
   } catch (error) {
     console.error("Juventus API error:", error);
@@ -155,7 +228,6 @@ export default async function handler(req, res) {
       pastMatches: [],
       nextMatches: [],
       updatedAt: new Date().toISOString(),
-      source: "football-data.org",
       error: error.message,
     });
   }
